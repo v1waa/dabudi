@@ -1409,20 +1409,4 @@ public partial class MainWindow : Window, IComponentConnector
 
 	[DllImport("user32.dll")]
 	private static extern bool UnregisterHotKey(nint window, int id);
-
-	private void BtnDonate_Click(object sender, RoutedEventArgs e)
-	{
-		try
-		{
-			Process.Start(new ProcessStartInfo
-			{
-				FileName = "https://www.donationalerts.com/r/v1waa",
-				UseShellExecute = true
-			});
-		}
-		catch
-		{
-			SetStatus("Не удалось открыть ссылку", active: false, isError: true);
-		}
-	}
 }
