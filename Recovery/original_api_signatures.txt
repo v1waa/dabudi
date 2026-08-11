@@ -1,0 +1,533 @@
+EVENT|dbdOverlay.Services.SystemPerformanceMonitor|None|System.Action`1<dbdOverlay.Services.PerformanceSnapshot>|SnapshotUpdated
+FIELD|dbdOverlay.App|Private|System.Boolean|_contentLoaded|CONST=
+FIELD|dbdOverlay.CrosshairWindow|Private, Static, Literal, HasDefault|System.Int32|GWL_EXSTYLE|CONST=-20
+FIELD|dbdOverlay.CrosshairWindow|Private, Static, Literal, HasDefault|System.Int32|WS_EX_NOACTIVATE|CONST=134217728
+FIELD|dbdOverlay.CrosshairWindow|Private, Static, Literal, HasDefault|System.Int32|WS_EX_TOOLWINDOW|CONST=128
+FIELD|dbdOverlay.CrosshairWindow|Private, Static, Literal, HasDefault|System.Int32|WS_EX_TRANSPARENT|CONST=32
+FIELD|dbdOverlay.CrosshairWindow|Private|System.Boolean|_contentLoaded|CONST=
+FIELD|dbdOverlay.MainWindow/CaptureMode|Public, SpecialName, RTSpecialName|System.Int32|value__|CONST=
+FIELD|dbdOverlay.MainWindow/CaptureMode|Public, Static, Literal, HasDefault|dbdOverlay.MainWindow/CaptureMode|Clicker|CONST=7
+FIELD|dbdOverlay.MainWindow/CaptureMode|Public, Static, Literal, HasDefault|dbdOverlay.MainWindow/CaptureMode|Close|CONST=2
+FIELD|dbdOverlay.MainWindow/CaptureMode|Public, Static, Literal, HasDefault|dbdOverlay.MainWindow/CaptureMode|Crosshair|CONST=4
+FIELD|dbdOverlay.MainWindow/CaptureMode|Public, Static, Literal, HasDefault|dbdOverlay.MainWindow/CaptureMode|Exit|CONST=3
+FIELD|dbdOverlay.MainWindow/CaptureMode|Public, Static, Literal, HasDefault|dbdOverlay.MainWindow/CaptureMode|None|CONST=0
+FIELD|dbdOverlay.MainWindow/CaptureMode|Public, Static, Literal, HasDefault|dbdOverlay.MainWindow/CaptureMode|Performance|CONST=6
+FIELD|dbdOverlay.MainWindow/CaptureMode|Public, Static, Literal, HasDefault|dbdOverlay.MainWindow/CaptureMode|Start|CONST=1
+FIELD|dbdOverlay.MainWindow/CaptureMode|Public, Static, Literal, HasDefault|dbdOverlay.MainWindow/CaptureMode|Timer|CONST=5
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.Border|rootBorder|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.Button|btnClickerToggle|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.Button|btnPerformanceToggle|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.Button|btnRecordClickerInput|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.Button|btnRecordClickerKey|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.Button|btnRecordCloseKey|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.Button|btnRecordCrosshairKey|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.Button|btnRecordExitKey|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.Button|btnRecordKey|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.Button|btnRecordPerformanceKey|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.Button|btnRecordTimerKey|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.CheckBox|chkCrosshair|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.CheckBox|chkRunAtStartup|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.Grid|rootGrid|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.RadioButton|navDbd|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.RadioButton|navGeneral|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.RadioButton|navInterface|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.TabControl|mainTabs|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.TextBlock|txtClickerState|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.TextBlock|txtPerformanceState|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.TextBox|txtAccentColor|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.TextBox|txtBorderColor|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.TextBox|txtClickerCps|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.TextBox|txtDsDuration|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.TextBox|txtEndDuration|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.TextBox|txtGridColor|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Controls.TextBox|txtTextColor|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Shapes.Rectangle|rectAccentPreview|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Shapes.Rectangle|rectBorderPreview|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Shapes.Rectangle|rectGridPreview|CONST=
+FIELD|dbdOverlay.MainWindow|Assembly|System.Windows.Shapes.Rectangle|rectTextPreview|CONST=
+FIELD|dbdOverlay.MainWindow|Private, InitOnly|dbdOverlay.MainWindow/HotkeyBinding|_clickerHotkey|CONST=
+FIELD|dbdOverlay.MainWindow|Private, InitOnly|dbdOverlay.MainWindow/HotkeyBinding|_closeHotkey|CONST=
+FIELD|dbdOverlay.MainWindow|Private, InitOnly|dbdOverlay.MainWindow/HotkeyBinding|_crosshairHotkey|CONST=
+FIELD|dbdOverlay.MainWindow|Private, InitOnly|dbdOverlay.MainWindow/HotkeyBinding|_exitHotkey|CONST=
+FIELD|dbdOverlay.MainWindow|Private, InitOnly|dbdOverlay.MainWindow/HotkeyBinding|_performanceHotkey|CONST=
+FIELD|dbdOverlay.MainWindow|Private, InitOnly|dbdOverlay.MainWindow/HotkeyBinding|_startHotkey|CONST=
+FIELD|dbdOverlay.MainWindow|Private, InitOnly|dbdOverlay.MainWindow/HotkeyBinding|_timerHotkey|CONST=
+FIELD|dbdOverlay.MainWindow|Private, InitOnly|dbdOverlay.Services.AutoClickerService|_autoClicker|CONST=
+FIELD|dbdOverlay.MainWindow|Private, Static, Literal, HasDefault|System.Int32|ClickerHotkeyId|CONST=9010
+FIELD|dbdOverlay.MainWindow|Private, Static, Literal, HasDefault|System.Int32|CrosshairHotkeyId|CONST=9003
+FIELD|dbdOverlay.MainWindow|Private, Static, Literal, HasDefault|System.Int32|ExitHotkeyId|CONST=9002
+FIELD|dbdOverlay.MainWindow|Private, Static, Literal, HasDefault|System.Int32|PerformanceHotkeyId|CONST=9005
+FIELD|dbdOverlay.MainWindow|Private, Static, Literal, HasDefault|System.Int32|StartHotkeyId|CONST=9000
+FIELD|dbdOverlay.MainWindow|Private, Static, Literal, HasDefault|System.Int32|TimerHotkeyId|CONST=9004
+FIELD|dbdOverlay.MainWindow|Private, Static, Literal, HasDefault|System.Int32|WmHotkey|CONST=786
+FIELD|dbdOverlay.MainWindow|Private, Static, Literal, HasDefault|System.UInt32|ModNoRepeat|CONST=16384
+FIELD|dbdOverlay.MainWindow|Private|System.Boolean|_capturingClickerInput|CONST=
+FIELD|dbdOverlay.MainWindow|Private|System.Boolean|_contentLoaded|CONST=
+FIELD|dbdOverlay.MainWindow|Private|System.Boolean|_isExiting|CONST=
+FIELD|dbdOverlay.MainWindow|Private|System.Boolean|_updatingUi|CONST=
+FIELD|dbdOverlay.MainWindow|Private|System.Windows.Forms.NotifyIcon|_notifyIcon|CONST=
+FIELD|dbdOverlay.MainWindow|Private|System.Windows.Interop.HwndSource|_source|CONST=
+FIELD|dbdOverlay.MainWindow|Private|dbdOverlay.CrosshairWindow|_crosshairWindow|CONST=
+FIELD|dbdOverlay.MainWindow|Private|dbdOverlay.MainWindow/CaptureMode|_captureMode|CONST=
+FIELD|dbdOverlay.MainWindow|Private|dbdOverlay.Models.ClickerBinding|_clickerBinding|CONST=
+FIELD|dbdOverlay.MainWindow|Private|dbdOverlay.OverlayWindow|_overlayWindow|CONST=
+FIELD|dbdOverlay.MainWindow|Private|dbdOverlay.PerformanceWindow|_performanceWindow|CONST=
+FIELD|dbdOverlay.MainWindow|Private|dbdOverlay.TimerWindow|_timerWindow|CONST=
+FIELD|dbdOverlay.Models.ClickerInputKind|Public, SpecialName, RTSpecialName|System.Int32|value__|CONST=
+FIELD|dbdOverlay.Models.ClickerInputKind|Public, Static, Literal, HasDefault|dbdOverlay.Models.ClickerInputKind|KeyboardKey|CONST=1
+FIELD|dbdOverlay.Models.ClickerInputKind|Public, Static, Literal, HasDefault|dbdOverlay.Models.ClickerInputKind|MouseButton|CONST=0
+FIELD|dbdOverlay.Models.MouseButtonKind|Public, SpecialName, RTSpecialName|System.Int32|value__|CONST=
+FIELD|dbdOverlay.Models.MouseButtonKind|Public, Static, Literal, HasDefault|dbdOverlay.Models.MouseButtonKind|Left|CONST=0
+FIELD|dbdOverlay.Models.MouseButtonKind|Public, Static, Literal, HasDefault|dbdOverlay.Models.MouseButtonKind|Middle|CONST=2
+FIELD|dbdOverlay.Models.MouseButtonKind|Public, Static, Literal, HasDefault|dbdOverlay.Models.MouseButtonKind|Right|CONST=1
+FIELD|dbdOverlay.Models.MouseButtonKind|Public, Static, Literal, HasDefault|dbdOverlay.Models.MouseButtonKind|X1|CONST=3
+FIELD|dbdOverlay.Models.MouseButtonKind|Public, Static, Literal, HasDefault|dbdOverlay.Models.MouseButtonKind|X2|CONST=4
+FIELD|dbdOverlay.OverlayWindow|Assembly|System.Windows.Controls.Image|imgDsOverlay|CONST=
+FIELD|dbdOverlay.OverlayWindow|Assembly|System.Windows.Controls.Image|imgEndOverlay|CONST=
+FIELD|dbdOverlay.OverlayWindow|Assembly|System.Windows.Controls.TextBlock|txtDsTimeOverlay|CONST=
+FIELD|dbdOverlay.OverlayWindow|Assembly|System.Windows.Controls.TextBlock|txtEndTimeOverlay|CONST=
+FIELD|dbdOverlay.OverlayWindow|Assembly|System.Windows.Controls.TextBlock|txtHeaderOverlay|CONST=
+FIELD|dbdOverlay.OverlayWindow|Assembly|System.Windows.Shapes.Path|dsMaskPath|CONST=
+FIELD|dbdOverlay.OverlayWindow|Assembly|System.Windows.Shapes.Path|endMaskPath|CONST=
+FIELD|dbdOverlay.OverlayWindow|Private, InitOnly|System.Windows.Threading.DispatcherTimer|_timer|CONST=
+FIELD|dbdOverlay.OverlayWindow|Private, Static, Literal, HasDefault|System.Int32|GWL_EXSTYLE|CONST=-20
+FIELD|dbdOverlay.OverlayWindow|Private, Static, Literal, HasDefault|System.Int32|HOTKEY_ID_CLOSE|CONST=9001
+FIELD|dbdOverlay.OverlayWindow|Private, Static, Literal, HasDefault|System.Int32|WM_HOTKEY|CONST=786
+FIELD|dbdOverlay.OverlayWindow|Private, Static, Literal, HasDefault|System.Int32|WS_EX_NOACTIVATE|CONST=134217728
+FIELD|dbdOverlay.OverlayWindow|Private|System.Boolean|_contentLoaded|CONST=
+FIELD|dbdOverlay.OverlayWindow|Private|System.Boolean|_isCloseHotkeyRegistered|CONST=
+FIELD|dbdOverlay.OverlayWindow|Private|System.DateTime|_dsEndTime|CONST=
+FIELD|dbdOverlay.OverlayWindow|Private|System.DateTime|_endEndTime|CONST=
+FIELD|dbdOverlay.OverlayWindow|Private|System.Double|_dsTotal|CONST=
+FIELD|dbdOverlay.OverlayWindow|Private|System.Double|_endTotal|CONST=
+FIELD|dbdOverlay.OverlayWindow|Private|System.Windows.Input.Key|_closeKey|CONST=
+FIELD|dbdOverlay.OverlayWindow|Private|System.Windows.Input.ModifierKeys|_closeModifiers|CONST=
+FIELD|dbdOverlay.OverlayWindow|Private|System.Windows.Interop.HwndSource|_source|CONST=
+FIELD|dbdOverlay.PerformanceWindow|Assembly|System.Windows.Controls.TextBlock|txtCpu|CONST=
+FIELD|dbdOverlay.PerformanceWindow|Assembly|System.Windows.Controls.TextBlock|txtGpu|CONST=
+FIELD|dbdOverlay.PerformanceWindow|Assembly|System.Windows.Controls.TextBlock|txtRam|CONST=
+FIELD|dbdOverlay.PerformanceWindow|Private, InitOnly|dbdOverlay.Services.SystemPerformanceMonitor|_monitor|CONST=
+FIELD|dbdOverlay.PerformanceWindow|Private|System.Boolean|_contentLoaded|CONST=
+FIELD|dbdOverlay.Services.AppThemeService|Private, Static, InitOnly|dbdOverlay.Services.AppThemePalette[]|_themes|CONST=
+FIELD|dbdOverlay.Services.AppThemeService|Public, Static, Literal, HasDefault|System.String|DefaultThemeId|CONST=SageGraphite
+FIELD|dbdOverlay.Services.AutoClickerService|Private, InitOnly|System.Object|_sync|CONST=
+FIELD|dbdOverlay.Services.AutoClickerService|Private|System.Threading.CancellationTokenSource|_cancellation|CONST=
+FIELD|dbdOverlay.Services.InputAutomationService/InputUnion|Public|dbdOverlay.Services.InputAutomationService/KeyboardInput|Keyboard|CONST=
+FIELD|dbdOverlay.Services.InputAutomationService/InputUnion|Public|dbdOverlay.Services.InputAutomationService/MouseInput|Mouse|CONST=
+FIELD|dbdOverlay.Services.InputAutomationService/Input|Public|System.UInt32|Type|CONST=
+FIELD|dbdOverlay.Services.InputAutomationService/Input|Public|dbdOverlay.Services.InputAutomationService/InputUnion|Union|CONST=
+FIELD|dbdOverlay.Services.InputAutomationService/KeyboardInput|Public|System.IntPtr|ExtraInfo|CONST=
+FIELD|dbdOverlay.Services.InputAutomationService/KeyboardInput|Public|System.UInt16|ScanCode|CONST=
+FIELD|dbdOverlay.Services.InputAutomationService/KeyboardInput|Public|System.UInt16|VirtualKey|CONST=
+FIELD|dbdOverlay.Services.InputAutomationService/KeyboardInput|Public|System.UInt32|Flags|CONST=
+FIELD|dbdOverlay.Services.InputAutomationService/KeyboardInput|Public|System.UInt32|Time|CONST=
+FIELD|dbdOverlay.Services.InputAutomationService/MouseInput|Public|System.Int32|X|CONST=
+FIELD|dbdOverlay.Services.InputAutomationService/MouseInput|Public|System.Int32|Y|CONST=
+FIELD|dbdOverlay.Services.InputAutomationService/MouseInput|Public|System.IntPtr|ExtraInfo|CONST=
+FIELD|dbdOverlay.Services.InputAutomationService/MouseInput|Public|System.UInt32|Flags|CONST=
+FIELD|dbdOverlay.Services.InputAutomationService/MouseInput|Public|System.UInt32|MouseData|CONST=
+FIELD|dbdOverlay.Services.InputAutomationService/MouseInput|Public|System.UInt32|Time|CONST=
+FIELD|dbdOverlay.Services.InputAutomationService|Private, Static, Literal, HasDefault|System.UInt32|InputKeyboard|CONST=1
+FIELD|dbdOverlay.Services.InputAutomationService|Private, Static, Literal, HasDefault|System.UInt32|InputMouse|CONST=0
+FIELD|dbdOverlay.Services.InputAutomationService|Private, Static, Literal, HasDefault|System.UInt32|KeyEventExtendedKey|CONST=1
+FIELD|dbdOverlay.Services.InputAutomationService|Private, Static, Literal, HasDefault|System.UInt32|KeyEventKeyUp|CONST=2
+FIELD|dbdOverlay.Services.InputAutomationService|Private, Static, Literal, HasDefault|System.UInt32|MouseEventLeftDown|CONST=2
+FIELD|dbdOverlay.Services.InputAutomationService|Private, Static, Literal, HasDefault|System.UInt32|MouseEventLeftUp|CONST=4
+FIELD|dbdOverlay.Services.InputAutomationService|Private, Static, Literal, HasDefault|System.UInt32|MouseEventMiddleDown|CONST=32
+FIELD|dbdOverlay.Services.InputAutomationService|Private, Static, Literal, HasDefault|System.UInt32|MouseEventMiddleUp|CONST=64
+FIELD|dbdOverlay.Services.InputAutomationService|Private, Static, Literal, HasDefault|System.UInt32|MouseEventRightDown|CONST=8
+FIELD|dbdOverlay.Services.InputAutomationService|Private, Static, Literal, HasDefault|System.UInt32|MouseEventRightUp|CONST=16
+FIELD|dbdOverlay.Services.InputAutomationService|Private, Static, Literal, HasDefault|System.UInt32|MouseEventWheel|CONST=2048
+FIELD|dbdOverlay.Services.InputAutomationService|Private, Static, Literal, HasDefault|System.UInt32|MouseEventXDown|CONST=128
+FIELD|dbdOverlay.Services.InputAutomationService|Private, Static, Literal, HasDefault|System.UInt32|MouseEventXUp|CONST=256
+FIELD|dbdOverlay.Services.StartupService|Private, Static, Literal, HasDefault|System.String|RunKeyPath|CONST=Software\Microsoft\Windows\CurrentVersion\Run
+FIELD|dbdOverlay.Services.StartupService|Private, Static, Literal, HasDefault|System.String|ValueName|CONST=dabudi
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor/MemoryStatusEx|Public|System.UInt32|Length|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor/MemoryStatusEx|Public|System.UInt32|MemoryLoad|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor/MemoryStatusEx|Public|System.UInt64|AvailableExtendedVirtual|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor/MemoryStatusEx|Public|System.UInt64|AvailablePageFile|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor/MemoryStatusEx|Public|System.UInt64|AvailablePhysical|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor/MemoryStatusEx|Public|System.UInt64|AvailableVirtual|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor/MemoryStatusEx|Public|System.UInt64|TotalPageFile|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor/MemoryStatusEx|Public|System.UInt64|TotalPhysical|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor/MemoryStatusEx|Public|System.UInt64|TotalVirtual|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor/NativeFileTime|Public|System.UInt32|HighDateTime|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor/NativeFileTime|Public|System.UInt32|LowDateTime|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor|Private, InitOnly|System.Object|_hardwareLock|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor|Private, InitOnly|System.Windows.Threading.DispatcherTimer|_timer|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor|Private, InitOnly|System.Windows.Threading.Dispatcher|_dispatcher|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor|Private|LibreHardwareMonitor.Hardware.Computer|_computer|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor|Private|System.Boolean|_elevatedSensorAttempted|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor|Private|System.Boolean|_hardwareReadInProgress|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor|Private|System.Boolean|_isRunning|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor|Private|System.Int32|_tickCount|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor|Private|System.Nullable`1<System.Double>|_cpuTemperatureC|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor|Private|System.Nullable`1<System.Double>|_gpuPercent|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor|Private|System.Nullable`1<System.Double>|_gpuTemperatureC|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor|Private|System.Threading.CancellationTokenSource|_elevatedSensorCancellation|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor|Private|System.UInt64|_previousIdle|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor|Private|System.UInt64|_previousKernel|CONST=
+FIELD|dbdOverlay.Services.SystemPerformanceMonitor|Private|System.UInt64|_previousUser|CONST=
+FIELD|dbdOverlay.SettingsModel|Private, Static, InitOnly|System.Text.Json.JsonSerializerOptions|_jsonOptions|CONST=
+FIELD|dbdOverlay.TimerWindow/TimerState|Public, SpecialName, RTSpecialName|System.Int32|value__|CONST=
+FIELD|dbdOverlay.TimerWindow/TimerState|Public, Static, Literal, HasDefault|dbdOverlay.TimerWindow/TimerState|Idle|CONST=0
+FIELD|dbdOverlay.TimerWindow/TimerState|Public, Static, Literal, HasDefault|dbdOverlay.TimerWindow/TimerState|Paused|CONST=2
+FIELD|dbdOverlay.TimerWindow/TimerState|Public, Static, Literal, HasDefault|dbdOverlay.TimerWindow/TimerState|Running|CONST=1
+FIELD|dbdOverlay.TimerWindow|Assembly|System.Windows.Controls.TextBlock|txtTimer|CONST=
+FIELD|dbdOverlay.TimerWindow|Private, InitOnly|System.Diagnostics.Stopwatch|_segmentStopwatch|CONST=
+FIELD|dbdOverlay.TimerWindow|Private, InitOnly|System.Windows.Threading.DispatcherTimer|_uiTimer|CONST=
+FIELD|dbdOverlay.TimerWindow|Private, Static, Literal, HasDefault|System.Int32|GWL_EXSTYLE|CONST=-20
+FIELD|dbdOverlay.TimerWindow|Private, Static, Literal, HasDefault|System.Int32|WS_EX_NOACTIVATE|CONST=134217728
+FIELD|dbdOverlay.TimerWindow|Private, Static, Literal, HasDefault|System.Int32|WS_EX_TOOLWINDOW|CONST=128
+FIELD|dbdOverlay.TimerWindow|Private, Static, Literal, HasDefault|System.Int32|WS_EX_TRANSPARENT|CONST=32
+FIELD|dbdOverlay.TimerWindow|Private|System.Boolean|_contentLoaded|CONST=
+FIELD|dbdOverlay.TimerWindow|Private|System.TimeSpan|_accumulated|CONST=
+FIELD|dbdOverlay.TimerWindow|Private|dbdOverlay.TimerWindow/TimerState|_state|CONST=
+INTERFACE|dbdOverlay.CrosshairWindow|System.Windows.Markup.IComponentConnector
+INTERFACE|dbdOverlay.MainWindow|System.Windows.Markup.IComponentConnector
+INTERFACE|dbdOverlay.Models.ClickerBinding|System.IEquatable`1<dbdOverlay.Models.ClickerBinding>
+INTERFACE|dbdOverlay.OverlayWindow|System.Windows.Markup.IComponentConnector
+INTERFACE|dbdOverlay.PerformanceWindow|System.Windows.Markup.IComponentConnector
+INTERFACE|dbdOverlay.Services.AppThemePalette|System.IEquatable`1<dbdOverlay.Services.AppThemePalette>
+INTERFACE|dbdOverlay.Services.AutoClickerService|System.IDisposable
+INTERFACE|dbdOverlay.Services.PerformanceSnapshot|System.IEquatable`1<dbdOverlay.Services.PerformanceSnapshot>
+INTERFACE|dbdOverlay.Services.SystemPerformanceMonitor|System.IDisposable
+INTERFACE|dbdOverlay.TimerWindow|System.Windows.Markup.IComponentConnector
+METHOD|dbdOverlay.App|Family, Virtual, HideBySig|System.Void|OnStartup|GEN=0|PARAMS=System.Windows.StartupEventArgs|PINVOKE=:
+METHOD|dbdOverlay.App|Private, HideBySig|System.Threading.Tasks.Task|RunSensorWorkerAndExitAsync|GEN=0|PARAMS=System.String|PINVOKE=:
+METHOD|dbdOverlay.App|Public, HideBySig, SpecialName, RTSpecialName|System.Void|.ctor|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.App|Public, HideBySig|System.Void|InitializeComponent|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.App|Public, Static, HideBySig|System.Void|Main|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.CrosshairWindow|Private, Final, Virtual, HideBySig, VtableLayoutMask|System.Void|System.Windows.Markup.IComponentConnector.Connect|GEN=0|PARAMS=System.Int32,System.Object|PINVOKE=:
+METHOD|dbdOverlay.CrosshairWindow|Private, HideBySig|System.Void|CrosshairWindow_SourceInitialized|GEN=0|PARAMS=System.Object,System.EventArgs|PINVOKE=:
+METHOD|dbdOverlay.CrosshairWindow|Private, Static, HideBySig, PInvokeImpl|System.Int32|GetWindowLong32|GEN=0|PARAMS=System.IntPtr,System.Int32|PINVOKE=user32.dll:GetWindowLong
+METHOD|dbdOverlay.CrosshairWindow|Private, Static, HideBySig, PInvokeImpl|System.Int32|SetWindowLong32|GEN=0|PARAMS=System.IntPtr,System.Int32,System.Int32|PINVOKE=user32.dll:SetWindowLong
+METHOD|dbdOverlay.CrosshairWindow|Private, Static, HideBySig, PInvokeImpl|System.IntPtr|GetWindowLongPtr64|GEN=0|PARAMS=System.IntPtr,System.Int32|PINVOKE=user32.dll:GetWindowLongPtr
+METHOD|dbdOverlay.CrosshairWindow|Private, Static, HideBySig, PInvokeImpl|System.IntPtr|SetWindowLongPtr64|GEN=0|PARAMS=System.IntPtr,System.Int32,System.IntPtr|PINVOKE=user32.dll:SetWindowLongPtr
+METHOD|dbdOverlay.CrosshairWindow|Private, Static, HideBySig|System.IntPtr|GetWindowLongPtr|GEN=0|PARAMS=System.IntPtr,System.Int32|PINVOKE=:
+METHOD|dbdOverlay.CrosshairWindow|Private, Static, HideBySig|System.IntPtr|SetWindowLongPtr|GEN=0|PARAMS=System.IntPtr,System.Int32,System.IntPtr|PINVOKE=:
+METHOD|dbdOverlay.CrosshairWindow|Public, Final, Virtual, HideBySig, VtableLayoutMask|System.Void|InitializeComponent|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.CrosshairWindow|Public, HideBySig, SpecialName, RTSpecialName|System.Void|.ctor|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow/HotkeyBinding|Public, HideBySig, SpecialName, RTSpecialName|System.Void|.ctor|GEN=0|PARAMS=System.Int32,System.Windows.Input.ModifierKeys,System.Windows.Input.Key|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, Final, Virtual, HideBySig, VtableLayoutMask|System.Void|System.Windows.Markup.IComponentConnector.Connect|GEN=0|PARAMS=System.Int32,System.Object|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Boolean|RegisterHotkey|GEN=0|PARAMS=System.Int32,System.Windows.Input.ModifierKeys,System.Windows.Input.Key|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Boolean|RegisterHotkey|GEN=0|PARAMS=dbdOverlay.MainWindow/HotkeyBinding,System.Boolean|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Int32|GetClickerCps|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.IntPtr|WndProc|GEN=0|PARAMS=System.IntPtr,System.Int32,System.IntPtr,System.IntPtr,System.Boolean&|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|ApplyAccentColor|GEN=0|PARAMS=System.String|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|ApplyBorderColor|GEN=0|PARAMS=System.String|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|ApplyClickerSettingsChange|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|ApplyCloseHotkeyToOverlay|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|ApplyGridColor|GEN=0|PARAMS=System.String|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|ApplyHotkeyChanges|GEN=0|PARAMS=dbdOverlay.MainWindow/CaptureMode|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|ApplyTextColor|GEN=0|PARAMS=System.String|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BeginHotkeyCapture|GEN=0|PARAMS=dbdOverlay.MainWindow/CaptureMode,System.Windows.Controls.Button|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnClickerToggle_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnCloseOverlay_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnDonate_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnExitNow_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnMinimizeToTray_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnPerformanceToggle_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnRecordClickerInput_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnRecordClickerKey_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnRecordCloseKey_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnRecordCrosshairKey_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnRecordExitKey_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnRecordPerformanceKey_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnRecordStartKey_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnRecordTimerKey_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnResetTheme_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnStartOverlay_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnToggleTimer_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnWindowClose_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnWindowMaximize_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|BtnWindowMinimize_Click|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|CancelClickerInputCapture|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|CancelHotkeyCapture|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|ChkRunAtStartup_Changed|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|CloseCrosshair|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|ClosePerformance|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|CompleteClickerInputCapture|GEN=0|PARAMS=dbdOverlay.Models.ClickerBinding|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|DisposeTrayIcon|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|ExitApplication|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|Header_MouseLeftButtonDown|GEN=0|PARAMS=System.Object,System.Windows.Input.MouseButtonEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|LoadSettings|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|NavDbd_Checked|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|NavGeneral_Checked|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|NavInterface_Checked|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|OnLoaded|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|OnPreviewKeyDown|GEN=0|PARAMS=System.Object,System.Windows.Input.KeyEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|OnPreviewMouseDown|GEN=0|PARAMS=System.Object,System.Windows.Input.MouseButtonEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|OnSourceInitialized|GEN=0|PARAMS=System.Object,System.EventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|OnWindowClosed|GEN=0|PARAMS=System.Object,System.EventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|OnWindowClosing|GEN=0|PARAMS=System.Object,System.ComponentModel.CancelEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|OpenCrosshair|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|OpenPerformance|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|RegisterGlobalHotkeys|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|RestoreFromTray|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|SaveSettings|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|SetStatus|GEN=0|PARAMS=System.String,System.Boolean,System.Boolean|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|ShowOrRestartOverlay|GEN=0|PARAMS=System.Int32,System.Int32|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|ShowTrayIcon|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|StartOverlayFromDurations|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|StopAutomation|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|StopClicker|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|ToggleClicker|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|ToggleCrosshair|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|TogglePerformance|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|ToggleTimerInternal|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|ToggleTimer|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|TxtAccentColor_TextChanged|GEN=0|PARAMS=System.Object,System.Windows.Controls.TextChangedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|TxtBorderColor_TextChanged|GEN=0|PARAMS=System.Object,System.Windows.Controls.TextChangedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|TxtClickerCps_LostFocus|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|TxtClickerCps_TextChanged|GEN=0|PARAMS=System.Object,System.Windows.Controls.TextChangedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|TxtGridColor_TextChanged|GEN=0|PARAMS=System.Object,System.Windows.Controls.TextChangedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|TxtTextColor_TextChanged|GEN=0|PARAMS=System.Object,System.Windows.Controls.TextChangedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|UnregisterGlobalHotkeys|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|UnregisterHotkey|GEN=0|PARAMS=System.Int32|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|UpdateClickerInputButton|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|UpdateClickerUi|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|UpdateHotkeyButtons|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|UpdateHotkeyButton|GEN=0|PARAMS=dbdOverlay.MainWindow/CaptureMode,System.Nullable`1<System.Windows.Input.Key>|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|UpdatePerformanceUi|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|chkCrosshair_Checked|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Void|chkCrosshair_Unchecked|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Windows.Forms.ContextMenuStrip|BuildTrayMenu|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|System.Windows.Media.Brush|GetBrush|GEN=0|PARAMS=System.String,System.Windows.Media.Brush|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, HideBySig|dbdOverlay.MainWindow/HotkeyBinding|GetBinding|GEN=0|PARAMS=dbdOverlay.MainWindow/CaptureMode|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, Static, HideBySig, PInvokeImpl|System.Boolean|RegisterHotKey|GEN=0|PARAMS=System.IntPtr,System.Int32,System.UInt32,System.UInt32|PINVOKE=user32.dll:RegisterHotKey
+METHOD|dbdOverlay.MainWindow|Private, Static, HideBySig, PInvokeImpl|System.Boolean|UnregisterHotKey|GEN=0|PARAMS=System.IntPtr,System.Int32|PINVOKE=user32.dll:UnregisterHotKey
+METHOD|dbdOverlay.MainWindow|Private, Static, HideBySig|System.Boolean|IsModifierKey|GEN=0|PARAMS=System.Windows.Input.Key|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, Static, HideBySig|System.Boolean|TryParseHex|GEN=0|PARAMS=System.String,System.Windows.Media.Color&|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, Static, HideBySig|System.Double|GetRelativeLuminance|GEN=0|PARAMS=System.Windows.Media.Color|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, Static, HideBySig|System.Drawing.Icon|LoadApplicationIcon|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, Static, HideBySig|System.Int32|ParseClamped|GEN=0|PARAMS=System.String,System.Int32,System.Int32,System.Int32|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, Static, HideBySig|System.Int32|ParseOrDefault|GEN=0|PARAMS=System.String,System.Int32,System.Int32|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, Static, HideBySig|System.String|FormatHotkeyDisplay|GEN=0|PARAMS=System.Windows.Input.ModifierKeys,System.Windows.Input.Key|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, Static, HideBySig|System.String|KeyToSetting|GEN=0|PARAMS=System.Windows.Input.Key|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, Static, HideBySig|System.Windows.Input.Key|NormalizeKey|GEN=0|PARAMS=System.Windows.Input.KeyEventArgs|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, Static, HideBySig|System.Windows.Input.Key|ParseKeyOrDefault|GEN=0|PARAMS=System.String,System.Windows.Input.Key|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, Static, HideBySig|System.Windows.Input.ModifierKeys|GetCurrentModifiers|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, Static, HideBySig|System.Windows.Media.Color|BlendColor|GEN=0|PARAMS=System.Windows.Media.Color,System.Windows.Media.Color,System.Double|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, Static, HideBySig|System.Windows.Media.Color|GetContrastingTextColor|GEN=0|PARAMS=System.Windows.Media.Color|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Private, Static, HideBySig|System.Windows.Media.SolidColorBrush|CreateBrush|GEN=0|PARAMS=System.Windows.Media.Color|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Public, Final, Virtual, HideBySig, VtableLayoutMask|System.Void|InitializeComponent|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.MainWindow|Public, HideBySig, SpecialName, RTSpecialName|System.Void|.ctor|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Models.ClickerBinding|Private, Static, HideBySig|System.String|GetKeyboardDisplayName|GEN=0|PARAMS=System.Int32|PINVOKE=:
+METHOD|dbdOverlay.Models.ClickerBinding|Private, Static, HideBySig|System.String|GetMouseDisplayName|GEN=0|PARAMS=dbdOverlay.Models.MouseButtonKind|PINVOKE=:
+METHOD|dbdOverlay.Models.ClickerBinding|Public, HideBySig, SpecialName, RTSpecialName|System.Void|.ctor|GEN=0|PARAMS=dbdOverlay.Models.ClickerInputKind,dbdOverlay.Models.MouseButtonKind,System.Int32|PINVOKE=:
+METHOD|dbdOverlay.Models.ClickerBinding|Public, HideBySig, SpecialName|System.String|get_DisplayName|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Models.ClickerBinding|Public, Static, HideBySig|dbdOverlay.Models.ClickerBinding|ForKeyboard|GEN=0|PARAMS=System.Int32|PINVOKE=:
+METHOD|dbdOverlay.Models.ClickerBinding|Public, Static, HideBySig|dbdOverlay.Models.ClickerBinding|ForMouse|GEN=0|PARAMS=dbdOverlay.Models.MouseButtonKind|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Private, Final, Virtual, HideBySig, VtableLayoutMask|System.Void|System.Windows.Markup.IComponentConnector.Connect|GEN=0|PARAMS=System.Int32,System.Object|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Private, HideBySig|System.Boolean|RegisterCloseHotkey|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Private, HideBySig|System.IntPtr|HwndHook|GEN=0|PARAMS=System.IntPtr,System.Int32,System.IntPtr,System.IntPtr,System.Boolean&|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Private, HideBySig|System.Void|ApplyNoActivateStyle|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Private, HideBySig|System.Void|CloseOverlay|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Private, HideBySig|System.Void|EnsureHook|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Private, HideBySig|System.Void|OverlayWindow_Closed|GEN=0|PARAMS=System.Object,System.EventArgs|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Private, HideBySig|System.Void|OverlayWindow_KeyDown|GEN=0|PARAMS=System.Object,System.Windows.Input.KeyEventArgs|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Private, HideBySig|System.Void|OverlayWindow_Loaded|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Private, HideBySig|System.Void|OverlayWindow_SourceInitialized|GEN=0|PARAMS=System.Object,System.EventArgs|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Private, HideBySig|System.Void|Timer_Tick|GEN=0|PARAMS=System.Object,System.EventArgs|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Private, HideBySig|System.Void|UnregisterCloseHotkey|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Private, HideBySig|System.Void|UpdateUi|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Private, HideBySig|System.Windows.Media.Geometry|CreateSectorGeometry|GEN=0|PARAMS=System.Double,System.Double,System.Double,System.Double|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Private, Static, HideBySig, PInvokeImpl|System.Boolean|RegisterHotKey|GEN=0|PARAMS=System.IntPtr,System.Int32,System.UInt32,System.UInt32|PINVOKE=user32.dll:RegisterHotKey
+METHOD|dbdOverlay.OverlayWindow|Private, Static, HideBySig, PInvokeImpl|System.Boolean|UnregisterHotKey|GEN=0|PARAMS=System.IntPtr,System.Int32|PINVOKE=user32.dll:UnregisterHotKey
+METHOD|dbdOverlay.OverlayWindow|Private, Static, HideBySig, PInvokeImpl|System.Int32|GetWindowLong32|GEN=0|PARAMS=System.IntPtr,System.Int32|PINVOKE=user32.dll:GetWindowLong
+METHOD|dbdOverlay.OverlayWindow|Private, Static, HideBySig, PInvokeImpl|System.Int32|SetWindowLong32|GEN=0|PARAMS=System.IntPtr,System.Int32,System.Int32|PINVOKE=user32.dll:SetWindowLong
+METHOD|dbdOverlay.OverlayWindow|Private, Static, HideBySig, PInvokeImpl|System.IntPtr|GetWindowLongPtr64|GEN=0|PARAMS=System.IntPtr,System.Int32|PINVOKE=user32.dll:GetWindowLongPtr
+METHOD|dbdOverlay.OverlayWindow|Private, Static, HideBySig, PInvokeImpl|System.IntPtr|SetWindowLongPtr64|GEN=0|PARAMS=System.IntPtr,System.Int32,System.IntPtr|PINVOKE=user32.dll:SetWindowLongPtr
+METHOD|dbdOverlay.OverlayWindow|Private, Static, HideBySig|System.IntPtr|GetWindowLongPtr|GEN=0|PARAMS=System.IntPtr,System.Int32|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Private, Static, HideBySig|System.IntPtr|SetWindowLongPtr|GEN=0|PARAMS=System.IntPtr,System.Int32,System.IntPtr|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Public, Final, Virtual, HideBySig, VtableLayoutMask|System.Void|InitializeComponent|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Public, HideBySig, SpecialName, RTSpecialName|System.Void|.ctor|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Public, HideBySig|System.Boolean|SetCloseHotkey|GEN=0|PARAMS=System.Windows.Input.Key,System.Windows.Input.ModifierKeys|PINVOKE=:
+METHOD|dbdOverlay.OverlayWindow|Public, HideBySig|System.Void|Start|GEN=0|PARAMS=System.Int32,System.Int32|PINVOKE=:
+METHOD|dbdOverlay.PerformanceWindow|Private, Final, Virtual, HideBySig, VtableLayoutMask|System.Void|System.Windows.Markup.IComponentConnector.Connect|GEN=0|PARAMS=System.Int32,System.Object|PINVOKE=:
+METHOD|dbdOverlay.PerformanceWindow|Private, HideBySig|System.Void|OnClosed|GEN=0|PARAMS=System.Object,System.EventArgs|PINVOKE=:
+METHOD|dbdOverlay.PerformanceWindow|Private, HideBySig|System.Void|OnLoaded|GEN=0|PARAMS=System.Object,System.Windows.RoutedEventArgs|PINVOKE=:
+METHOD|dbdOverlay.PerformanceWindow|Private, HideBySig|System.Void|OnSnapshotUpdated|GEN=0|PARAMS=dbdOverlay.Services.PerformanceSnapshot|PINVOKE=:
+METHOD|dbdOverlay.PerformanceWindow|Private, HideBySig|System.Void|Window_MouseLeftButtonDown|GEN=0|PARAMS=System.Object,System.Windows.Input.MouseButtonEventArgs|PINVOKE=:
+METHOD|dbdOverlay.PerformanceWindow|Private, Static, HideBySig|System.String|FormatLoadAndTemperature|GEN=0|PARAMS=System.Nullable`1<System.Double>,System.Nullable`1<System.Double>|PINVOKE=:
+METHOD|dbdOverlay.PerformanceWindow|Public, Final, Virtual, HideBySig, VtableLayoutMask|System.Void|InitializeComponent|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.PerformanceWindow|Public, HideBySig, SpecialName, RTSpecialName|System.Void|.ctor|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.AppThemePalette|Public, HideBySig, SpecialName, RTSpecialName|System.Void|.ctor|GEN=0|PARAMS=System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String,System.String|PINVOKE=:
+METHOD|dbdOverlay.Services.AppThemeService|Private, Static, HideBySig, SpecialName, RTSpecialName|System.Void|.cctor|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.AppThemeService|Private, Static, HideBySig|System.Void|SetBrush|GEN=0|PARAMS=System.Windows.ResourceDictionary,System.String,System.String|PINVOKE=:
+METHOD|dbdOverlay.Services.AppThemeService|Public, Static, HideBySig, SpecialName|System.Collections.Generic.IReadOnlyList`1<dbdOverlay.Services.AppThemePalette>|get_Themes|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.AppThemeService|Public, Static, HideBySig|System.Void|Apply|GEN=0|PARAMS=System.String|PINVOKE=:
+METHOD|dbdOverlay.Services.AppThemeService|Public, Static, HideBySig|dbdOverlay.Services.AppThemePalette|GetTheme|GEN=0|PARAMS=System.String|PINVOKE=:
+METHOD|dbdOverlay.Services.AutoClickerService|Private, HideBySig|System.Threading.Tasks.Task|RunAsync|GEN=0|PARAMS=dbdOverlay.Models.ClickerBinding,System.Int32,System.Threading.CancellationTokenSource|PINVOKE=:
+METHOD|dbdOverlay.Services.AutoClickerService|Public, Final, Virtual, HideBySig, VtableLayoutMask|System.Void|Dispose|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.AutoClickerService|Public, HideBySig, SpecialName, RTSpecialName|System.Void|.ctor|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.AutoClickerService|Public, HideBySig, SpecialName|System.Boolean|get_IsRunning|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.AutoClickerService|Public, HideBySig|System.Void|Start|GEN=0|PARAMS=dbdOverlay.Models.ClickerBinding,System.Int32|PINVOKE=:
+METHOD|dbdOverlay.Services.AutoClickerService|Public, HideBySig|System.Void|Stop|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.ElevatedSensorWorker|Private, Static, HideBySig|System.Boolean|IsCpuTemperatureName|GEN=0|PARAMS=System.String|PINVOKE=:
+METHOD|dbdOverlay.Services.ElevatedSensorWorker|Private, Static, HideBySig|System.String|Format|GEN=0|PARAMS=System.Nullable`1<System.Double>|PINVOKE=:
+METHOD|dbdOverlay.Services.ElevatedSensorWorker|Private, Static, HideBySig|System.ValueTuple`3<System.Nullable`1<System.Double>,System.Nullable`1<System.Double>,System.Nullable`1<System.Double>>|ReadSensors|GEN=0|PARAMS=LibreHardwareMonitor.Hardware.Computer|PINVOKE=:
+METHOD|dbdOverlay.Services.ElevatedSensorWorker|Private, Static, HideBySig|System.Void|ReadHardwareTree|GEN=0|PARAMS=LibreHardwareMonitor.Hardware.IHardware,System.Boolean,System.Boolean,System.Nullable`1<System.Double>&,System.Nullable`1<System.Double>&,System.Nullable`1<System.Double>&|PINVOKE=:
+METHOD|dbdOverlay.Services.ElevatedSensorWorker|Private, Static, HideBySig|System.Void|SetMaximum|GEN=0|PARAMS=System.Nullable`1<System.Double>&,System.Double|PINVOKE=:
+METHOD|dbdOverlay.Services.ElevatedSensorWorker|Public, Static, HideBySig|System.Threading.Tasks.Task|RunAsync|GEN=0|PARAMS=System.String|PINVOKE=:
+METHOD|dbdOverlay.Services.InputAutomationService|Private, Static, HideBySig, PInvokeImpl|System.Boolean|SetCursorPos|GEN=0|PARAMS=System.Int32,System.Int32|PINVOKE=user32.dll:SetCursorPos
+METHOD|dbdOverlay.Services.InputAutomationService|Private, Static, HideBySig, PInvokeImpl|System.UInt32|SendInput|GEN=0|PARAMS=System.UInt32,dbdOverlay.Services.InputAutomationService/Input[],System.Int32|PINVOKE=user32.dll:SendInput
+METHOD|dbdOverlay.Services.InputAutomationService|Private, Static, HideBySig|System.Boolean|IsExtendedKey|GEN=0|PARAMS=System.Int32|PINVOKE=:
+METHOD|dbdOverlay.Services.InputAutomationService|Private, Static, HideBySig|dbdOverlay.Services.InputAutomationService/Input|CreateKeyboardInput|GEN=0|PARAMS=System.Int32,System.Boolean|PINVOKE=:
+METHOD|dbdOverlay.Services.InputAutomationService|Private, Static, HideBySig|dbdOverlay.Services.InputAutomationService/Input|CreateMouseButtonInput|GEN=0|PARAMS=dbdOverlay.Models.MouseButtonKind,System.Boolean|PINVOKE=:
+METHOD|dbdOverlay.Services.InputAutomationService|Public, Static, HideBySig|System.Void|Click|GEN=0|PARAMS=dbdOverlay.Models.MouseButtonKind|PINVOKE=:
+METHOD|dbdOverlay.Services.InputAutomationService|Public, Static, HideBySig|System.Void|PressKey|GEN=0|PARAMS=System.Int32|PINVOKE=:
+METHOD|dbdOverlay.Services.InputAutomationService|Public, Static, HideBySig|System.Void|SendKey|GEN=0|PARAMS=System.Int32,System.Boolean|PINVOKE=:
+METHOD|dbdOverlay.Services.InputAutomationService|Public, Static, HideBySig|System.Void|SendMouseButton|GEN=0|PARAMS=dbdOverlay.Models.MouseButtonKind,System.Boolean|PINVOKE=:
+METHOD|dbdOverlay.Services.InputAutomationService|Public, Static, HideBySig|System.Void|SendMouseWheel|GEN=0|PARAMS=System.Int32|PINVOKE=:
+METHOD|dbdOverlay.Services.InputAutomationService|Public, Static, HideBySig|System.Void|SetCursorPosition|GEN=0|PARAMS=System.Int32,System.Int32|PINVOKE=:
+METHOD|dbdOverlay.Services.PerformanceSnapshot|Public, HideBySig, SpecialName, RTSpecialName|System.Void|.ctor|GEN=0|PARAMS=System.Nullable`1<System.Double>,System.Nullable`1<System.Double>,System.Nullable`1<System.Double>,System.Nullable`1<System.Double>,System.Double,System.Double|PINVOKE=:
+METHOD|dbdOverlay.Services.StartupService|Public, Static, HideBySig|System.Boolean|SetEnabled|GEN=0|PARAMS=System.Boolean|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor/NativeFileTime|Public, HideBySig|System.UInt64|ToUInt64|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, HideBySig|System.Double|ReadCpuPercent|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, HideBySig|System.Threading.Tasks.Task|ReceiveElevatedSensorsAsync|GEN=0|PARAMS=System.String,System.String,System.Threading.CancellationToken|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, HideBySig|System.Threading.Tasks.Task|UpdateHardwareSensorsAsync|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, HideBySig|System.ValueTuple`3<System.Nullable`1<System.Double>,System.Nullable`1<System.Double>,System.Nullable`1<System.Double>>|ReadDirectHardwareSensors|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, HideBySig|System.Void|CloseDirectHardwareMonitor|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, HideBySig|System.Void|OnTimerTick|GEN=0|PARAMS=System.Object,System.EventArgs|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, HideBySig|System.Void|OpenDirectHardwareMonitor|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, HideBySig|System.Void|PublishSnapshot|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, HideBySig|System.Void|StartElevatedSensorReader|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, Static, HideBySig, PInvokeImpl|System.Boolean|GetSystemTimes|GEN=0|PARAMS=dbdOverlay.Services.SystemPerformanceMonitor/NativeFileTime&,dbdOverlay.Services.SystemPerformanceMonitor/NativeFileTime&,dbdOverlay.Services.SystemPerformanceMonitor/NativeFileTime&|PINVOKE=kernel32.dll:GetSystemTimes
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, Static, HideBySig, PInvokeImpl|System.Boolean|GlobalMemoryStatusEx|GEN=0|PARAMS=dbdOverlay.Services.SystemPerformanceMonitor/MemoryStatusEx&|PINVOKE=kernel32.dll:GlobalMemoryStatusEx
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, Static, HideBySig|System.Boolean|IsCpuTemperatureName|GEN=0|PARAMS=System.String|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, Static, HideBySig|System.Nullable`1<System.Double>|ParseInvariant|GEN=0|PARAMS=System.String|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, Static, HideBySig|System.Nullable`1<System.Double>|ValidatePercent|GEN=0|PARAMS=System.Nullable`1<System.Double>|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, Static, HideBySig|System.Nullable`1<System.Double>|ValidateTemperature|GEN=0|PARAMS=System.Nullable`1<System.Double>|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, Static, HideBySig|System.Threading.Tasks.Task`1<System.String>|RunProcessAsync|GEN=0|PARAMS=System.String,System.String[]|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, Static, HideBySig|System.Threading.Tasks.Task`1<System.ValueTuple`2<System.Nullable`1<System.Double>,System.Nullable`1<System.Double>>>|ReadNvidiaSensorsAsync|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, Static, HideBySig|System.Threading.Tasks.Task`1<System.ValueTuple`3<System.Nullable`1<System.Double>,System.Nullable`1<System.Double>,System.Nullable`1<System.Double>>>|ReadHardwareMonitorSensorsAsync|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, Static, HideBySig|System.ValueTuple`2<System.Double,System.Double>|ReadMemory|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, Static, HideBySig|System.ValueTuple`3<System.Nullable`1<System.Double>,System.Nullable`1<System.Double>,System.Nullable`1<System.Double>>|ParseSensorLine|GEN=0|PARAMS=System.String|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, Static, HideBySig|System.Void|ReadHardwareTree|GEN=0|PARAMS=LibreHardwareMonitor.Hardware.IHardware,System.Boolean,System.Boolean,System.Nullable`1<System.Double>&,System.Nullable`1<System.Double>&,System.Nullable`1<System.Double>&|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Private, Static, HideBySig|System.Void|SetMaximum|GEN=0|PARAMS=System.Nullable`1<System.Double>&,System.Double|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Public, Final, Virtual, HideBySig, VtableLayoutMask|System.Void|Dispose|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Public, HideBySig, SpecialName, RTSpecialName|System.Void|.ctor|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Public, HideBySig|System.Void|Start|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.Services.SystemPerformanceMonitor|Public, HideBySig|System.Void|Stop|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.SettingsModel|Private, HideBySig|System.Void|Normalize|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.SettingsModel|Private, Static, HideBySig, SpecialName, RTSpecialName|System.Void|.cctor|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.SettingsModel|Public, HideBySig, SpecialName, RTSpecialName|System.Void|.ctor|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.SettingsModel|Public, HideBySig|System.Void|Save|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.SettingsModel|Public, Static, HideBySig|System.String|GetSettingsPath|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.SettingsModel|Public, Static, HideBySig|dbdOverlay.SettingsModel|Load|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.TimerWindow|Private, Final, Virtual, HideBySig, VtableLayoutMask|System.Void|System.Windows.Markup.IComponentConnector.Connect|GEN=0|PARAMS=System.Int32,System.Object|PINVOKE=:
+METHOD|dbdOverlay.TimerWindow|Private, HideBySig|System.TimeSpan|GetCurrentElapsed|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.TimerWindow|Private, HideBySig|System.Void|OnSourceInitialized|GEN=0|PARAMS=System.Object,System.EventArgs|PINVOKE=:
+METHOD|dbdOverlay.TimerWindow|Private, HideBySig|System.Void|OnUiTick|GEN=0|PARAMS=System.Object,System.EventArgs|PINVOKE=:
+METHOD|dbdOverlay.TimerWindow|Private, HideBySig|System.Void|PositionTopLeft|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.TimerWindow|Private, HideBySig|System.Void|SetPausedVisual|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.TimerWindow|Private, HideBySig|System.Void|SetRunningVisual|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.TimerWindow|Private, HideBySig|System.Void|UpdateDisplay|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.TimerWindow|Private, Static, HideBySig, PInvokeImpl|System.Int32|GetWindowLong32|GEN=0|PARAMS=System.IntPtr,System.Int32|PINVOKE=user32.dll:GetWindowLong
+METHOD|dbdOverlay.TimerWindow|Private, Static, HideBySig, PInvokeImpl|System.Int32|SetWindowLong32|GEN=0|PARAMS=System.IntPtr,System.Int32,System.Int32|PINVOKE=user32.dll:SetWindowLong
+METHOD|dbdOverlay.TimerWindow|Private, Static, HideBySig, PInvokeImpl|System.IntPtr|GetWindowLongPtr64|GEN=0|PARAMS=System.IntPtr,System.Int32|PINVOKE=user32.dll:GetWindowLongPtr
+METHOD|dbdOverlay.TimerWindow|Private, Static, HideBySig, PInvokeImpl|System.IntPtr|SetWindowLongPtr64|GEN=0|PARAMS=System.IntPtr,System.Int32,System.IntPtr|PINVOKE=user32.dll:SetWindowLongPtr
+METHOD|dbdOverlay.TimerWindow|Private, Static, HideBySig|System.IntPtr|GetWindowLongPtr|GEN=0|PARAMS=System.IntPtr,System.Int32|PINVOKE=:
+METHOD|dbdOverlay.TimerWindow|Private, Static, HideBySig|System.IntPtr|SetWindowLongPtr|GEN=0|PARAMS=System.IntPtr,System.Int32,System.IntPtr|PINVOKE=:
+METHOD|dbdOverlay.TimerWindow|Public, Final, Virtual, HideBySig, VtableLayoutMask|System.Void|InitializeComponent|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.TimerWindow|Public, HideBySig, SpecialName, RTSpecialName|System.Void|.ctor|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.TimerWindow|Public, HideBySig|System.Void|ForceClose|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.TimerWindow|Public, HideBySig|System.Void|HandleHotkey|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.TimerWindow|Public, HideBySig|System.Void|Pause|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.TimerWindow|Public, HideBySig|System.Void|Resume|GEN=0|PARAMS=|PINVOKE=:
+METHOD|dbdOverlay.TimerWindow|Public, HideBySig|System.Void|StartFresh|GEN=0|PARAMS=|PINVOKE=:
+PROPERTY|dbdOverlay.MainWindow/HotkeyBinding|None|System.Int32|Id|INDEX=
+PROPERTY|dbdOverlay.MainWindow/HotkeyBinding|None|System.Windows.Input.Key|Key|INDEX=
+PROPERTY|dbdOverlay.MainWindow/HotkeyBinding|None|System.Windows.Input.ModifierKeys|Modifiers|INDEX=
+PROPERTY|dbdOverlay.Models.ClickerBinding|None|System.Int32|VirtualKey|INDEX=
+PROPERTY|dbdOverlay.Models.ClickerBinding|None|System.String|DisplayName|INDEX=
+PROPERTY|dbdOverlay.Models.ClickerBinding|None|dbdOverlay.Models.ClickerInputKind|Kind|INDEX=
+PROPERTY|dbdOverlay.Models.ClickerBinding|None|dbdOverlay.Models.MouseButtonKind|MouseButton|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|AccentHover|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|AccentPressed|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|AccentText|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|Accent|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|AppBackground|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|Border|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|ControlBackground|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|ControlHover|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|ControlPressed|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|DangerSurface|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|Danger|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|DisplayName|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|Divider|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|Id|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|PanelBackground|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|Shadow|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|Success|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|SurfaceAlt|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|Surface|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|TabHover|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|TabInactive|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|TextPrimary|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|TextSecondary|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemePalette|None|System.String|Warning|INDEX=
+PROPERTY|dbdOverlay.Services.AppThemeService|None|System.Collections.Generic.IReadOnlyList`1<dbdOverlay.Services.AppThemePalette>|Themes|INDEX=
+PROPERTY|dbdOverlay.Services.AutoClickerService|None|System.Boolean|IsRunning|INDEX=
+PROPERTY|dbdOverlay.Services.PerformanceSnapshot|None|System.Double|TotalMemoryGb|INDEX=
+PROPERTY|dbdOverlay.Services.PerformanceSnapshot|None|System.Double|UsedMemoryGb|INDEX=
+PROPERTY|dbdOverlay.Services.PerformanceSnapshot|None|System.Nullable`1<System.Double>|CpuPercent|INDEX=
+PROPERTY|dbdOverlay.Services.PerformanceSnapshot|None|System.Nullable`1<System.Double>|CpuTemperatureC|INDEX=
+PROPERTY|dbdOverlay.Services.PerformanceSnapshot|None|System.Nullable`1<System.Double>|GpuPercent|INDEX=
+PROPERTY|dbdOverlay.Services.PerformanceSnapshot|None|System.Nullable`1<System.Double>|GpuTemperatureC|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.Boolean|RunAtStartup|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.Int32|ClickerCps|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.Int32|ClickerVirtualKey|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.Int32|DsDuration|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.Int32|EndDuration|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.String|AccentColor|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.String|BorderColor|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.String|ClickerKey|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.String|CloseKey|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.String|CrosshairKey|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.String|ExitKey|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.String|GridColor|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.String|Key|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.String|PerformanceKey|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.String|TextColor|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.String|ThemeName|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.String|TimerKey|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.UInt32|ClickerModifiers|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.UInt32|CloseModifiers|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.UInt32|CrosshairModifiers|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.UInt32|ExitModifiers|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.UInt32|Modifiers|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.UInt32|PerformanceModifiers|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|System.UInt32|TimerModifiers|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|dbdOverlay.Models.ClickerInputKind|ClickerTargetKind|INDEX=
+PROPERTY|dbdOverlay.SettingsModel|None|dbdOverlay.Models.MouseButtonKind|ClickerButton|INDEX=
+TYPE|Abstract, Sealed, BeforeFieldInit|dbdOverlay.Services.ElevatedSensorWorker|BASE=System.Object
+TYPE|Abstract, Sealed, BeforeFieldInit|dbdOverlay.Services.InputAutomationService|BASE=System.Object
+TYPE|Abstract, Sealed, BeforeFieldInit|dbdOverlay.Services.StartupService|BASE=System.Object
+TYPE|Class|<Module>|BASE=
+TYPE|NestedPrivate, ExplicitLayout, Sealed, BeforeFieldInit|dbdOverlay.Services.InputAutomationService/InputUnion|BASE=System.ValueType
+TYPE|NestedPrivate, Sealed, BeforeFieldInit|dbdOverlay.MainWindow/HotkeyBinding|BASE=System.Object
+TYPE|NestedPrivate, Sealed|dbdOverlay.MainWindow/CaptureMode|BASE=System.Enum
+TYPE|NestedPrivate, Sealed|dbdOverlay.TimerWindow/TimerState|BASE=System.Enum
+TYPE|NestedPrivate, SequentialLayout, Sealed, AutoClass, BeforeFieldInit|dbdOverlay.Services.SystemPerformanceMonitor/MemoryStatusEx|BASE=System.ValueType
+TYPE|NestedPrivate, SequentialLayout, Sealed, BeforeFieldInit|dbdOverlay.Services.InputAutomationService/Input|BASE=System.ValueType
+TYPE|NestedPrivate, SequentialLayout, Sealed, BeforeFieldInit|dbdOverlay.Services.InputAutomationService/KeyboardInput|BASE=System.ValueType
+TYPE|NestedPrivate, SequentialLayout, Sealed, BeforeFieldInit|dbdOverlay.Services.InputAutomationService/MouseInput|BASE=System.ValueType
+TYPE|NestedPrivate, SequentialLayout, Sealed, BeforeFieldInit|dbdOverlay.Services.SystemPerformanceMonitor/NativeFileTime|BASE=System.ValueType
+TYPE|Public, Abstract, Sealed, BeforeFieldInit|dbdOverlay.Services.AppThemeService|BASE=System.Object
+TYPE|Public, BeforeFieldInit|dbdOverlay.App|BASE=System.Windows.Application
+TYPE|Public, BeforeFieldInit|dbdOverlay.CrosshairWindow|BASE=System.Windows.Window
+TYPE|Public, BeforeFieldInit|dbdOverlay.MainWindow|BASE=System.Windows.Window
+TYPE|Public, BeforeFieldInit|dbdOverlay.OverlayWindow|BASE=System.Windows.Window
+TYPE|Public, BeforeFieldInit|dbdOverlay.PerformanceWindow|BASE=System.Windows.Window
+TYPE|Public, BeforeFieldInit|dbdOverlay.SettingsModel|BASE=System.Object
+TYPE|Public, BeforeFieldInit|dbdOverlay.TimerWindow|BASE=System.Windows.Window
+TYPE|Public, Sealed, BeforeFieldInit|dbdOverlay.Services.AppThemePalette|BASE=System.Object
+TYPE|Public, Sealed|dbdOverlay.Models.ClickerInputKind|BASE=System.Enum
+TYPE|Public, Sealed|dbdOverlay.Models.MouseButtonKind|BASE=System.Enum
+TYPE|Public, SequentialLayout, Sealed, BeforeFieldInit|dbdOverlay.Models.ClickerBinding|BASE=System.ValueType
+TYPE|Sealed, BeforeFieldInit|dbdOverlay.Services.AutoClickerService|BASE=System.Object
+TYPE|Sealed, BeforeFieldInit|dbdOverlay.Services.SystemPerformanceMonitor|BASE=System.Object
+TYPE|SequentialLayout, Sealed, BeforeFieldInit|dbdOverlay.Services.PerformanceSnapshot|BASE=System.ValueType

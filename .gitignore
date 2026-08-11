@@ -1,0 +1,17 @@
+.vs/
+.idea/
+.vscode/
+.nuget/
+**/bin/
+**/obj/
+dist/
+artifacts/
+*.user
+*.suo
+*.pdb
+*.tmp
+*.exe
+*.dll
+*.nupkg
+*.snupkg
+*_wpftmp.csproj

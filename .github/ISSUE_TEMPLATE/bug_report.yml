@@ -1,0 +1,56 @@
+name: Сообщение об ошибке
+description: Воспроизводимая проблема в приложении или сборке
+title: "[Bug]: "
+body:
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Предварительная проверка
+      options:
+        - label: Я проверил существующие issues и не нашёл дубликата.
+          required: true
+        - label: Я собирал проект с зафиксированными зависимостями (`--locked-mode`).
+          required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Версия или commit
+      placeholder: v2.5.8 или SHA commit
+    validations:
+      required: true
+
+  - type: input
+    id: windows
+    attributes:
+      label: Версия Windows
+      placeholder: Windows 11 24H2 x64
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Шаги воспроизведения
+      description: Опишите точную последовательность действий.
+      placeholder: |
+        1. Запустить ...
+        2. Нажать ...
+        3. Ошибка ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Ожидаемый результат
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Фактический результат и логи
+      description: Не публикуйте токены, пароли и другие секреты.
+    validations:
+      required: true
