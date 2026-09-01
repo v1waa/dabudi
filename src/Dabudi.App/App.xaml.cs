@@ -72,6 +72,11 @@ public partial class App : Application
             await Task.Delay(180);
             if (controller.Overlays.Count != 4 || controller.Elapsed.Elapsed <= TimeSpan.Zero)
                 throw new InvalidOperationException("Smoke check: tools did not start.");
+            static Rect ScreenBounds(Window overlay) => new(overlay.PointToScreen(new(0, 0)),
+                overlay.PointToScreen(new(overlay.ActualWidth, overlay.ActualHeight)));
+            if (ScreenBounds(controller.Overlays.Get(OverlayKind.Effects)!)
+                .IntersectsWith(ScreenBounds(controller.Overlays.Get(OverlayKind.Performance)!)))
+                throw new InvalidOperationException("Smoke check: performance and effect overlays overlap.");
             controller.Run(AppAction.ToggleStopwatch);
             var paused = controller.Elapsed.Elapsed;
             await Task.Delay(100);
@@ -93,6 +98,15 @@ public partial class App : Application
                 if (controller.Overlays.Get(kind) is { } overlay)
                     SaveScreenshot(overlay, Path.Combine(_smokeOutput!, $"overlay-{kind}.png"));
             window.SelectTabForSmoke(0);
+            var hotkeyMenu = window.ShowHotkeyMenuForSmoke();
+            await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+            ((MenuItem)hotkeyMenu.Items[0]).Command.Execute(null);
+            if (controller.Settings.Shortcuts[AppAction.ToggleClicker].IsEnabled)
+                throw new InvalidOperationException("Smoke check: hotkey context menu did not clear the binding.");
+            ((MenuItem)hotkeyMenu.Items[1]).Command.Execute(null);
+            if (controller.Settings.Shortcuts[AppAction.ToggleClicker] != Shortcut.Defaults()[AppAction.ToggleClicker])
+                throw new InvalidOperationException("Smoke check: hotkey context menu did not restore the binding.");
+            hotkeyMenu.IsOpen = false;
             if (!window.SetDelayForSmoke("5")) throw new InvalidOperationException("Smoke check: delay save failed.");
             window.ToggleClickerForSmoke();
             await Task.Delay(80);
@@ -139,7 +153,8 @@ public partial class App : Application
             {
                 passed = true, overlayCountAfterStop = controller.Overlays.Count,
                 bindingErrors = listener.Errors.Count, settingsSave = true,
-                delayedClick = true, hideKeepsRunning = true, closeExits = true
+                delayedClick = true, hideKeepsRunning = true, closeExits = true,
+                overlaysDoNotOverlap = true, hotkeyMenu = true
             }));
         }
         catch (Exception exception) { FailStartup(exception); }

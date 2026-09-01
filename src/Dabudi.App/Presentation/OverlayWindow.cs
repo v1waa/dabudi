@@ -24,6 +24,7 @@ public sealed class OverlayWindow : Window
     private readonly Ellipse _crosshair = new() { StrokeThickness = 2 };
     private AppSettings _settings;
     private string _device;
+    private double _effectsTop = 100;
 
     public OverlayWindow(OverlayKind kind, AppSettings settings)
     {
@@ -173,6 +174,12 @@ public sealed class OverlayWindow : Window
         if (handle != 0) WindowsDesktop.SetOverlayStyles(handle, _settings.AllowOverlayDragging && _kind != OverlayKind.Crosshair);
     }
 
+    internal void AvoidPerformanceOverlap(OverlayWindow? performance)
+    {
+        _effectsTop = performance != null && performance._device == _device ? 18 + performance.Height + 16 : 100;
+        SchedulePosition();
+    }
+
     public void SchedulePosition()
     {
         Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
@@ -182,7 +189,7 @@ public sealed class OverlayWindow : Window
             {
                 OverlayKind.Crosshair => (OverlayAnchor.Center, 0d, 0d),
                 OverlayKind.Stopwatch => (OverlayAnchor.TopLeft, 16d, 16d),
-                OverlayKind.Effects => (OverlayAnchor.TopRight, 10d, 100d),
+                OverlayKind.Effects => (OverlayAnchor.TopRight, 10d, _effectsTop),
                 _ => (OverlayAnchor.TopRight, 18d, 18d)
             };
             WindowsDesktop.Position(new WindowInteropHelper(this).Handle, _device, anchor, x, y);

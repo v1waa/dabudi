@@ -185,6 +185,14 @@ public partial class MainWindow : Window
         return _viewModel.SaveSettings();
     }
     internal void ToggleClickerForSmoke() => _viewModel.ToggleClicker.Execute(null);
+    internal ContextMenu ShowHotkeyMenuForSmoke()
+    {
+        var button = (Button)FindName("btnRecordClickerKey");
+        var menu = button.ContextMenu;
+        menu.PlacementTarget = button;
+        menu.IsOpen = true;
+        return menu;
+    }
     internal void ScrollTabForSmoke(bool toEnd)
     {
         if (NavigationTabs.SelectedContent is not ScrollViewer scroll) return;
