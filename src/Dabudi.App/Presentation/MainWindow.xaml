@@ -104,9 +104,9 @@
                         <Grid.ColumnDefinitions>
                           <ColumnDefinition Width="*" /><ColumnDefinition Width="8" /><ColumnDefinition Width="*" /><ColumnDefinition Width="8" /><ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Button Width="Auto" Padding="3,0" HorizontalAlignment="Stretch" Content="{Binding StopwatchButton}" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding ToggleStopwatch}" />
-                        <Button Grid.Column="2" Width="Auto" HorizontalAlignment="Stretch" Content="{Binding StopwatchVisibilityButton}" Command="{Binding ToggleStopwatchVisibility}" ToolTip="Показать или скрыть секундомер без изменения отсчёта" />
-                        <Button Name="btnRecordTimerKey" Grid.Column="4" Width="Auto" HorizontalAlignment="Stretch" DataContext="{Binding StopwatchHotkey}" Content="{Binding Binding}" Style="{StaticResource CaptureHotkeyButtonStyle}" Click="CaptureHotkey_Click" />
+                        <Button Width="Auto" MinWidth="0" Padding="3,0" HorizontalAlignment="Stretch" Content="{Binding StopwatchButton}" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding ToggleStopwatch}" />
+                        <Button Grid.Column="2" Width="Auto" MinWidth="0" HorizontalAlignment="Stretch" Content="{Binding StopwatchVisibilityButton}" Command="{Binding ToggleStopwatchVisibility}" ToolTip="Показать или скрыть секундомер без изменения отсчёта" />
+                        <Button Name="btnRecordTimerKey" Grid.Column="4" Width="Auto" MinWidth="0" HorizontalAlignment="Stretch" DataContext="{Binding StopwatchHotkey}" Content="{Binding Binding}" Style="{StaticResource CaptureHotkeyButtonStyle}" Click="CaptureHotkey_Click" />
                       </Grid>
                     </Grid>
                   </Border>
