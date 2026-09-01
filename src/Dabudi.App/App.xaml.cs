@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using System.Windows.Interop;
 using Dabudi.Presentation;
 
 namespace Dabudi;
@@ -21,6 +22,15 @@ public partial class App : Application
         _smokeTest = e.Args.Contains("--smoke-test");
         var roaming = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         var local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        if (e.Args.Length == 2 && e.Args[0] is "--cpu-sensor" or "--cpu-sensor-smoke")
+        {
+            var sensorSmoke = e.Args[0] == "--cpu-sensor-smoke";
+            _log = new(sensorSmoke
+                ? Path.Combine(Environment.GetEnvironmentVariable("DABUDI_SMOKE_OUTPUT") ?? Path.GetTempPath(), "sensor-logs")
+                : Path.Combine(local, "dabudi", "logs"));
+            _ = RunCpuSensorAsync(e.Args[1], sensorSmoke);
+            return;
+        }
         _smokeOutput = _smokeTest ? Environment.GetEnvironmentVariable("DABUDI_SMOKE_OUTPUT")
             ?? Path.Combine(Path.GetTempPath(), "dabudi-smoke-" + Guid.NewGuid().ToString("N")) : null;
         var settingsDirectory = _smokeOutput == null ? Path.Combine(roaming, "dabudi") : Path.Combine(_smokeOutput, "settings");
@@ -59,8 +69,22 @@ public partial class App : Application
         catch (Exception exception) { FailStartup(exception); }
     }
 
+    private async Task RunCpuSensorAsync(string pipeName, bool smokeTest)
+    {
+        try { Shutdown(await Task.Run(() => CpuSensorWorker.RunAsync(pipeName, _log!, smokeTest))); }
+        catch (Exception exception) { _log?.Write("CPU process startup failed", exception); Shutdown(1); }
+    }
+
     private async Task RunSmokeAsync(Presentation.MainWindow window, AppController controller, BindingErrorListener listener)
     {
+        var firstFrames = new Dictionary<OverlayKind, PixelRect>();
+        void ObserveFirstFrame(object? sender, EventArgs args)
+        {
+            foreach (var kind in Enum.GetValues<OverlayKind>())
+                if (!firstFrames.ContainsKey(kind) && controller.Overlays.Get(kind) is { IsVisible: true, Opacity: 1 } overlay)
+                    firstFrames.Add(kind, WindowsDesktop.WindowBounds(new WindowInteropHelper(overlay).Handle));
+        }
+        CompositionTarget.Rendering += ObserveFirstFrame;
         try
         {
             Directory.CreateDirectory(_smokeOutput!);
@@ -72,18 +96,52 @@ public partial class App : Application
             await Task.Delay(180);
             if (controller.Overlays.Count != 4 || controller.Elapsed.Elapsed <= TimeSpan.Zero)
                 throw new InvalidOperationException("Smoke check: tools did not start.");
+            foreach (var kind in Enum.GetValues<OverlayKind>())
+            {
+                var overlay = controller.Overlays.Get(kind)!;
+                var current = WindowsDesktop.WindowBounds(new WindowInteropHelper(overlay).Handle);
+                if (!firstFrames.TryGetValue(kind, out var first) || first != current || first != overlay.AnchorBounds())
+                    throw new InvalidOperationException($"Smoke check: {kind} jumped after its first frame: {first} -> {current}; expected {overlay.AnchorBounds()}.");
+            }
+            CompositionTarget.Rendering -= ObserveFirstFrame;
             static Rect ScreenBounds(Window overlay) => new(overlay.PointToScreen(new(0, 0)),
                 overlay.PointToScreen(new(overlay.ActualWidth, overlay.ActualHeight)));
             if (ScreenBounds(controller.Overlays.Get(OverlayKind.Effects)!)
                 .IntersectsWith(ScreenBounds(controller.Overlays.Get(OverlayKind.Performance)!)))
                 throw new InvalidOperationException("Smoke check: performance and effect overlays overlap.");
             controller.Run(AppAction.ToggleStopwatch);
-            var paused = controller.Elapsed.Elapsed;
+            var stopped = controller.Elapsed.Elapsed;
             await Task.Delay(100);
-            if (controller.Elapsed.Elapsed != paused) throw new InvalidOperationException("Smoke check: pause drift.");
+            if (controller.Elapsed.Elapsed != stopped) throw new InvalidOperationException("Smoke check: stopped stopwatch drifted.");
+            controller.ToggleStopwatchVisibility();
+            if (controller.Elapsed.Elapsed != stopped || controller.Overlays.IsVisible(OverlayKind.Stopwatch))
+                throw new InvalidOperationException("Smoke check: hiding changed the stopped result.");
             controller.Run(AppAction.ToggleStopwatch);
-            await Task.Delay(80);
-            if (controller.Elapsed.Elapsed <= paused) throw new InvalidOperationException("Smoke check: resume failed.");
+            if (controller.Elapsed.Elapsed >= stopped || controller.Overlays.IsVisible(OverlayKind.Stopwatch))
+                throw new InvalidOperationException("Smoke check: a new run did not start at zero or changed hidden visibility.");
+            await Task.Delay(100);
+            if (controller.Elapsed.Elapsed <= TimeSpan.Zero) throw new InvalidOperationException("Smoke check: hidden stopwatch did not run.");
+            var hiddenTime = controller.Elapsed.Elapsed;
+            controller.ToggleStopwatchVisibility();
+            if (controller.Elapsed.Elapsed < hiddenTime || !controller.Overlays.IsVisible(OverlayKind.Stopwatch))
+                throw new InvalidOperationException("Smoke check: showing the stopwatch changed its running time.");
+            controller.SetPerformanceForSmoke(new(10, null, 67, 55, 11.5, 15.7) { CpuStatus = CpuTemperatureStatus.DriverMissing });
+            await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+            var viewModel = (MainViewModel)window.DataContext;
+            if (!viewModel.ShowCpuSensorSetup || !viewModel.CanEnableCpuSensors || viewModel.CpuSensorButton != "Установить PawnIO")
+                throw new InvalidOperationException("Smoke check: missing CPU driver has no setup action.");
+            SaveScreenshot(window, Path.Combine(_smokeOutput!, "cpu-setup.png"));
+            await controller.EnableCpuSensorsAsync();
+            var sensorDeadline = Stopwatch.GetTimestamp();
+            while (controller.LatestPerformance.CpuStatus != CpuTemperatureStatus.Ready)
+            {
+                if (Stopwatch.GetElapsedTime(sensorDeadline) > TimeSpan.FromSeconds(8))
+                    throw new InvalidOperationException("Smoke check: sensor process did not deliver a temperature.");
+                await Task.Delay(50);
+            }
+            if (controller.LatestPerformance.CpuTemperature != 61.5 || viewModel.ShowCpuSensorSetup)
+                throw new InvalidOperationException("Smoke check: CPU readings did not reach the overlay/view model.");
+            using var sensorProcess = Process.GetProcessById(controller.CpuSensorProcessIdForSmoke!.Value);
             for (var index = 0; index < 3; index++)
             {
                 window.SelectTabForSmoke(index);
@@ -134,6 +192,8 @@ public partial class App : Application
             await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
             SaveScreenshot(window, Path.Combine(_smokeOutput!, "general-minimum-bottom.png"));
             controller.Run(AppAction.StopAll);
+            await sensorProcess.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(5));
+            if (sensorProcess.ExitCode != 0) throw new InvalidOperationException("Smoke check: sensor process did not exit cleanly.");
             if (controller.Overlays.Count != 0 || controller.Elapsed.State != StopwatchState.Idle || controller.Effects.IsActive || controller.IsClickerRunning)
                 throw new InvalidOperationException("Smoke check: Stop All left a tool running.");
             if (!controller.Save(controller.Settings with { EnduranceSeconds = 0 }))
@@ -154,11 +214,16 @@ public partial class App : Application
                 passed = true, overlayCountAfterStop = controller.Overlays.Count,
                 bindingErrors = listener.Errors.Count, settingsSave = true,
                 delayedClick = true, hideKeepsRunning = true, closeExits = true,
-                overlaysDoNotOverlap = true, hotkeyMenu = true
+                overlaysDoNotOverlap = true, hotkeyMenu = true, firstFramePosition = true,
+                stopwatchRestartsFromZero = true, stopwatchVisibilityIndependent = true, cpuSensorProcess = true
             }));
         }
         catch (Exception exception) { FailStartup(exception); }
-        finally { PresentationTraceSources.DataBindingSource.Listeners.Remove(listener); }
+        finally
+        {
+            CompositionTarget.Rendering -= ObserveFirstFrame;
+            PresentationTraceSources.DataBindingSource.Listeners.Remove(listener);
+        }
     }
 
     private static void SaveScreenshot(Window window, string path)

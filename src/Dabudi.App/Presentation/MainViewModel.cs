@@ -69,12 +69,13 @@ public sealed class MainViewModel : ObservableObject
     public string ElapsedDisplay => OverlayWindow.FormatTime(_controller.Elapsed.Elapsed);
     public string StopwatchStatus => _controller.Elapsed.State switch
     {
-        StopwatchState.Running => "Работает", StopwatchState.Paused => "Пауза", _ => "Остановлен"
+        StopwatchState.Running => "Работает", StopwatchState.Stopped => "Остановлен", _ => "Готов к запуску"
     };
     public string StopwatchButton => _controller.Elapsed.State switch
     {
-        StopwatchState.Running => "Пауза", StopwatchState.Paused => "Продолжить", _ => "Запустить"
+        StopwatchState.Running => "Остановить", StopwatchState.Stopped => "Запуск с 0", _ => "Запустить"
     };
+    public string StopwatchVisibilityButton => _controller.Overlays.IsVisible(OverlayKind.Stopwatch) ? "Скрыть" : "Показать";
     public string ClickerStatus => _controller.ClickerRemainingDelay is { } remaining ? $"Через {remaining.TotalSeconds:0.0} с"
         : _controller.IsClickerRunning ? "Работает" : "Остановлен";
     public string ClickerButton => _controller.IsClickerRunning
@@ -86,11 +87,29 @@ public sealed class MainViewModel : ObservableObject
     public string PerformanceButton => _controller.Overlays.IsVisible(OverlayKind.Performance) ? "Скрыть" : "Показать";
     public string EffectsStatus => _controller.Effects.IsActive ? "Таймеры работают" : "Таймеры остановлены";
     public string PerformanceStatus => _controller.Overlays.IsVisible(OverlayKind.Performance) ? "Включён" : "Выключен";
+    public bool ShowCpuSensorSetup => _controller.Overlays.IsVisible(OverlayKind.Performance)
+        && _controller.LatestPerformance.CpuStatus != CpuTemperatureStatus.Ready;
+    public bool CanEnableCpuSensors => !_controller.IsStartingCpuSensors
+        && _controller.LatestPerformance.CpuStatus is not (CpuTemperatureStatus.Checking or CpuTemperatureStatus.Installing or CpuTemperatureStatus.RestartRequired);
+    public string CpuSensorButton => _controller.IsStartingCpuSensors ? "Ожидание доступа…"
+        : _controller.LatestPerformance.CpuStatus == CpuTemperatureStatus.DriverMissing ? "Установить PawnIO" : "Включить датчики CPU";
+    public string CpuSensorHint => _controller.LatestPerformance.CpuStatus switch
+    {
+        CpuTemperatureStatus.DriverMissing => "Для температуры CPU нужен PawnIO. Установка запросит права администратора.",
+        CpuTemperatureStatus.AccessRequired => "Разрешите чтение температуры CPU в окне доступа Windows.",
+        CpuTemperatureStatus.Installing => "Устанавливается PawnIO 2.2.0. Датчики включатся автоматически.",
+        CpuTemperatureStatus.RestartRequired => "PawnIO установлен. Перезагрузите Windows, затем включите датчики CPU.",
+        CpuTemperatureStatus.Unavailable => "Датчик CPU не ответил. Проверьте поддержку процессора; подробности в журнале.",
+        CpuTemperatureStatus.Failed => "Датчики недоступны. Повторите подключение или откройте журнал.",
+        _ => "Проверяем доступ к температуре CPU…"
+    };
     public ICommand ToggleStopwatch { get; }
     public ICommand ResetStopwatch { get; }
+    public ICommand ToggleStopwatchVisibility { get; }
     public ICommand ToggleClicker { get; }
     public ICommand ToggleCrosshair { get; }
     public ICommand TogglePerformance { get; }
+    public ICommand EnableCpuSensors { get; }
     public ICommand StartEffects { get; }
     public ICommand CloseEffects { get; }
     public ICommand StopAll { get; }
@@ -106,12 +125,14 @@ public sealed class MainViewModel : ObservableObject
         ICommand Command(AppAction action) => new RelayCommand(() => controller.Run(action));
         ToggleStopwatch = Command(AppAction.ToggleStopwatch);
         ResetStopwatch = Command(AppAction.ResetStopwatch);
+        ToggleStopwatchVisibility = new RelayCommand(controller.ToggleStopwatchVisibility);
         ToggleClicker = new RelayCommand(() =>
         {
             if (controller.IsClickerRunning || SaveSettings()) controller.Run(AppAction.ToggleClicker);
         });
         ToggleCrosshair = Command(AppAction.ToggleCrosshair);
         TogglePerformance = Command(AppAction.TogglePerformance);
+        EnableCpuSensors = new RelayCommand(async () => await controller.EnableCpuSensorsAsync());
         StartEffects = new RelayCommand(() => { if (SaveSettings()) controller.Run(AppAction.RestartEffects); });
         CloseEffects = Command(AppAction.CloseEffects);
         StopAll = Command(AppAction.StopAll);
@@ -202,6 +223,7 @@ public sealed class MainViewModel : ObservableObject
     {
         foreach (var name in new[] { nameof(ElapsedDisplay), nameof(StopwatchStatus), nameof(StopwatchButton),
             nameof(ClickerStatus), nameof(ClickerButton), nameof(CrosshairButton), nameof(IsCrosshairVisible), nameof(PerformanceButton),
-            nameof(EffectsStatus), nameof(PerformanceStatus) }) Changed(name);
+            nameof(EffectsStatus), nameof(PerformanceStatus), nameof(StopwatchVisibilityButton),
+            nameof(ShowCpuSensorSetup), nameof(CanEnableCpuSensors), nameof(CpuSensorButton), nameof(CpuSensorHint) }) Changed(name);
     }
 }

@@ -20,7 +20,9 @@ $resultPath = Join-Path $env:DABUDI_SMOKE_OUTPUT 'smoke-result.json'
 if (-not (Test-Path $resultPath)) { throw 'Smoke result file was not created.' }
 $result = Get-Content $resultPath -Raw | ConvertFrom-Json
 if (-not $result.passed -or $result.bindingErrors -ne 0 -or -not $result.delayedClick -or -not $result.hideKeepsRunning `
-    -or -not $result.closeExits -or -not $result.overlaysDoNotOverlap -or -not $result.hotkeyMenu) {
+    -or -not $result.closeExits -or -not $result.overlaysDoNotOverlap -or -not $result.hotkeyMenu `
+    -or -not $result.firstFramePosition -or -not $result.stopwatchRestartsFromZero `
+    -or -not $result.stopwatchVisibilityIndependent -or -not $result.cpuSensorProcess) {
     throw 'Smoke validation did not pass.'
 }
-Write-Host 'WPF startup, classic views, hotkey menu, overlays, timers, delayed input, hide and full exit passed.'
+Write-Host 'WPF views, first-frame positions, independent stopwatch controls, CPU sensor process, delayed input and full exit passed.'

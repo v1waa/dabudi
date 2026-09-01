@@ -102,12 +102,11 @@
                       </StackPanel>
                       <Grid Grid.Column="2" Width="320" HorizontalAlignment="Right">
                         <Grid.ColumnDefinitions>
-                          <ColumnDefinition Width="*" />
-                          <ColumnDefinition Width="8" />
-                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="*" /><ColumnDefinition Width="8" /><ColumnDefinition Width="*" /><ColumnDefinition Width="8" /><ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Button HorizontalAlignment="Stretch" Width="Auto" Content="{Binding StopwatchButton}" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding ToggleStopwatch}" />
-                        <Button Name="btnRecordTimerKey" Grid.Column="2" Width="Auto" HorizontalAlignment="Stretch" DataContext="{Binding StopwatchHotkey}" Content="{Binding Binding}" Style="{StaticResource CaptureHotkeyButtonStyle}" Click="CaptureHotkey_Click" />
+                        <Button Width="Auto" Padding="3,0" HorizontalAlignment="Stretch" Content="{Binding StopwatchButton}" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding ToggleStopwatch}" />
+                        <Button Grid.Column="2" Width="Auto" HorizontalAlignment="Stretch" Content="{Binding StopwatchVisibilityButton}" Command="{Binding ToggleStopwatchVisibility}" ToolTip="Показать или скрыть секундомер без изменения отсчёта" />
+                        <Button Name="btnRecordTimerKey" Grid.Column="4" Width="Auto" HorizontalAlignment="Stretch" DataContext="{Binding StopwatchHotkey}" Content="{Binding Binding}" Style="{StaticResource CaptureHotkeyButtonStyle}" Click="CaptureHotkey_Click" />
                       </Grid>
                     </Grid>
                   </Border>
@@ -124,6 +123,40 @@
                         <Button Width="Auto" HorizontalAlignment="Stretch" Content="Сбросить" Command="{Binding ResetStopwatch}" />
                         <Button Grid.Column="2" Width="Auto" HorizontalAlignment="Stretch" DataContext="{Binding ResetStopwatchHotkey}" Content="{Binding Binding}" Style="{StaticResource CaptureHotkeyButtonStyle}" Click="CaptureHotkey_Click" />
                       </Grid>
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Монитор производительности" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Name="txtPerformanceState" Text="{Binding PerformanceStatus}" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <Grid Grid.Column="2" Width="320" HorizontalAlignment="Right">
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="8" />
+                          <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Name="btnPerformanceToggle" Width="Auto" HorizontalAlignment="Stretch" Content="{Binding PerformanceButton}" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding TogglePerformance}" />
+                        <Button Name="btnRecordPerformanceKey" Grid.Column="2" Width="Auto" HorizontalAlignment="Stretch" DataContext="{Binding PerformanceHotkey}" Content="{Binding Binding}" Style="{StaticResource CaptureHotkeyButtonStyle}" Click="CaptureHotkey_Click" />
+                      </Grid>
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}" Visibility="{Binding ShowCpuSensorSetup, Converter={StaticResource BoolVisibility}}">
+                    <Grid>
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="30" /><ColumnDefinition Width="*" /><ColumnDefinition Width="170" /></Grid.ColumnDefinitions>
+                      <TextBlock Text="&#xE9D9;" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,12,0">
+                        <TextBlock Text="Температура CPU" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="{Binding CpuSensorHint}" Style="{StaticResource MutedTextStyle}" TextWrapping="Wrap" />
+                      </StackPanel>
+                      <Button Grid.Column="2" Width="Auto" HorizontalAlignment="Stretch" Content="{Binding CpuSensorButton}" Command="{Binding EnableCpuSensors}" IsEnabled="{Binding CanEnableCpuSensors}" />
                     </Grid>
                   </Border>
                   <Grid Style="{StaticResource InspectorSectionHeaderStyle}">
@@ -220,29 +253,6 @@
                     <TextBlock Grid.Column="1" Text="СИСТЕМА" Style="{StaticResource InspectorSectionTitleStyle}" />
                     <Border Grid.Column="2" Margin="11,0,0,0" Height="1" VerticalAlignment="Center" Background="{DynamicResource DividerBrush}" />
                   </Grid>
-                  <Border Style="{StaticResource InspectorRowStyle}">
-                    <Grid>
-                      <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="30" />
-                        <ColumnDefinition Width="185" />
-                        <ColumnDefinition Width="*" />
-                      </Grid.ColumnDefinitions>
-                      <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
-                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                        <TextBlock Text="Монитор производительности" Style="{StaticResource InspectorLabelStyle}" />
-                        <TextBlock Name="txtPerformanceState" Text="{Binding PerformanceStatus}" Style="{StaticResource MutedTextStyle}" />
-                      </StackPanel>
-                      <Grid Grid.Column="2" Width="320" HorizontalAlignment="Right">
-                        <Grid.ColumnDefinitions>
-                          <ColumnDefinition Width="*" />
-                          <ColumnDefinition Width="8" />
-                          <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Button Name="btnPerformanceToggle" Width="Auto" HorizontalAlignment="Stretch" Content="{Binding PerformanceButton}" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding TogglePerformance}" />
-                        <Button Name="btnRecordPerformanceKey" Grid.Column="2" Width="Auto" HorizontalAlignment="Stretch" DataContext="{Binding PerformanceHotkey}" Content="{Binding Binding}" Style="{StaticResource CaptureHotkeyButtonStyle}" Click="CaptureHotkey_Click" />
-                      </Grid>
-                    </Grid>
-                  </Border>
                   <Border Style="{StaticResource InspectorRowStyle}">
                     <Grid>
                       <Grid.ColumnDefinitions>

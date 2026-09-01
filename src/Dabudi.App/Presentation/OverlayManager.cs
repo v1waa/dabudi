@@ -7,15 +7,23 @@ public sealed class OverlayManager
     public bool IsVisible(OverlayKind kind) => _windows.ContainsKey(kind);
     public OverlayWindow? Get(OverlayKind kind) => _windows.GetValueOrDefault(kind);
 
-    public OverlayWindow Show(OverlayKind kind, AppSettings settings)
+    public OverlayWindow Show(OverlayKind kind, AppSettings settings, Action<OverlayWindow>? initialize = null)
     {
-        if (_windows.TryGetValue(kind, out var current)) return current;
+        if (_windows.TryGetValue(kind, out var current))
+        {
+            initialize?.Invoke(current);
+            return current;
+        }
         var window = new OverlayWindow(kind, settings);
         _windows.Add(kind, window);
         window.Closed += (_, _) => { _windows.Remove(kind); Arrange(); };
-        try { window.Show(); }
+        try
+        {
+            initialize?.Invoke(window);
+            Arrange();
+            window.ShowPositioned();
+        }
         catch { _windows.Remove(kind); window.Close(); throw; }
-        Arrange();
         return window;
     }
 

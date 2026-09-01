@@ -12,6 +12,10 @@ public sealed class AppController : IDisposable
     private readonly DispatcherTimer _ticker = new(DispatcherPriority.Render) { Interval = TimeSpan.FromMilliseconds(33) };
     private readonly ClickerEngine _clicker;
     private readonly HardwareMonitor _hardware;
+    private readonly CpuTemperatureSession _cpuSession;
+    private CpuTemperatureReading? _cpuReading;
+    private bool _stopwatchHidden;
+    private bool _cpuSessionActive;
     private HotkeyRegistry? _hotkeys;
     private long _suppressUntil;
     private bool _disposed;
@@ -24,6 +28,7 @@ public sealed class AppController : IDisposable
     public bool IsClickerRunning => _clicker.IsRunning;
     public TimeSpan? ClickerRemainingDelay => _clicker.RemainingDelay;
     public bool IsExiting { get; private set; }
+    public bool IsStartingCpuSensors { get; private set; }
     public string Status { get; private set; }
     public bool StatusIsError { get; private set; }
     public event Action? StateChanged;
@@ -42,7 +47,9 @@ public sealed class AppController : IDisposable
         Status = loaded.Notice ?? "Готово";
         StatusIsError = loaded.Notice != null;
         _hardware = new(log);
+        _cpuSession = new(log);
         _hardware.Updated += OnPerformanceUpdated;
+        _cpuSession.Updated += OnCpuTemperatureUpdated;
         _clicker.Finished += OnClickerFinished;
         _ticker.Tick += (_, _) => Tick();
         Theme.Apply(Settings);
@@ -94,7 +101,7 @@ public sealed class AppController : IDisposable
                         Report("Оба таймера отключены. Укажите длительность больше нуля.");
                         break;
                     }
-                    Overlays.Show(OverlayKind.Effects, Settings).Render(Effects.Snapshot());
+                    Overlays.Show(OverlayKind.Effects, Settings, window => window.Render(Effects.Snapshot()));
                     Report("Таймеры DBD запущены");
                     if (_hotkeys != null) ReportHotkeyErrors(_hotkeys.SetEffectsActive(true));
                     break;
@@ -104,11 +111,12 @@ public sealed class AppController : IDisposable
                     break;
                 case AppAction.ToggleStopwatch:
                     Elapsed.Toggle();
-                    Overlays.Show(OverlayKind.Stopwatch, Settings).Render(Elapsed);
-                    Report(Elapsed.State == StopwatchState.Paused ? "Секундомер на паузе" : "Секундомер работает");
+                    if (!_stopwatchHidden) Overlays.Show(OverlayKind.Stopwatch, Settings, window => window.Render(Elapsed));
+                    Report(Elapsed.State == StopwatchState.Stopped ? "Секундомер остановлен; следующий запуск начнёт отсчёт с нуля" : "Секундомер запущен с нуля");
                     break;
                 case AppAction.ResetStopwatch:
                     Elapsed.Reset();
+                    _stopwatchHidden = false;
                     Overlays.Close(OverlayKind.Stopwatch);
                     Report("Секундомер сброшен");
                     break;
@@ -119,8 +127,12 @@ public sealed class AppController : IDisposable
                     break;
                 case AppAction.TogglePerformance:
                     var visible = !Overlays.IsVisible(OverlayKind.Performance);
-                    if (visible) Overlays.Show(OverlayKind.Performance, Settings).Render(LatestPerformance);
-                    else Overlays.Close(OverlayKind.Performance);
+                    if (visible) Overlays.Show(OverlayKind.Performance, Settings, window => window.Render(LatestPerformance));
+                    else
+                    {
+                        Overlays.Close(OverlayKind.Performance);
+                        StopCpuSensors();
+                    }
                     if (!_smokeTest) _hardware.SetEnabled(visible);
                     Report(visible ? "Мониторинг включён" : "Мониторинг выключен");
                     break;
@@ -164,8 +176,10 @@ public sealed class AppController : IDisposable
     {
         _clicker.Stop();
         _hardware.SetEnabled(false);
+        StopCpuSensors();
         Effects.Stop();
         Elapsed.Reset();
+        _stopwatchHidden = false;
         Overlays.CloseAll();
         if (_hotkeys != null) ReportHotkeyErrors(_hotkeys.SetEffectsActive(false));
         NotifyState();
@@ -199,10 +213,87 @@ public sealed class AppController : IDisposable
         _dispatcher.BeginInvoke(new Action(() =>
         {
             if (_disposed || !Overlays.IsVisible(OverlayKind.Performance)) return;
-            LatestPerformance = snapshot;
-            Overlays.Get(OverlayKind.Performance)?.Render(snapshot);
+            LatestPerformance = _cpuReading is { } cpu ? snapshot with { CpuTemperature = cpu.Temperature, CpuStatus = cpu.Status } : snapshot;
+            Overlays.Get(OverlayKind.Performance)?.Render(LatestPerformance);
             StateChanged?.Invoke();
         }));
+    }
+
+    public void ToggleStopwatchVisibility()
+    {
+        if (_disposed || IsExiting) return;
+        try
+        {
+            _stopwatchHidden = Overlays.IsVisible(OverlayKind.Stopwatch);
+            if (_stopwatchHidden) Overlays.Close(OverlayKind.Stopwatch);
+            else Overlays.Show(OverlayKind.Stopwatch, Settings, window => window.Render(Elapsed));
+            Report(_stopwatchHidden ? "Секундомер скрыт с экрана" : "Секундомер показан на экране");
+            NotifyState();
+        }
+        catch (Exception exception) { Fail("Не удалось изменить видимость секундомера", exception); }
+    }
+
+    public async Task EnableCpuSensorsAsync()
+    {
+        if (_disposed || IsExiting || IsStartingCpuSensors || !Overlays.IsVisible(OverlayKind.Performance)) return;
+        IsStartingCpuSensors = true;
+        _cpuSessionActive = true;
+        _cpuReading = new(null, CpuTemperatureStatus.Checking);
+        LatestPerformance = LatestPerformance with { CpuTemperature = null, CpuStatus = CpuTemperatureStatus.Checking };
+        Overlays.Get(OverlayKind.Performance)?.Render(LatestPerformance);
+        NotifyState();
+        try
+        {
+            await _cpuSession.StartAsync(_smokeTest);
+            if (!_cpuSessionActive || _disposed) return;
+            Report("Доступ к датчикам CPU разрешён. Ожидаем показания.");
+        }
+        catch (Exception) when (!_cpuSessionActive || _disposed) { }
+        catch (System.ComponentModel.Win32Exception exception) when (exception.NativeErrorCode == 1223)
+        {
+            _cpuSessionActive = false;
+            _cpuReading = null;
+            Report("Доступ к датчикам CPU отменён");
+        }
+        catch (Exception exception)
+        {
+            _cpuSessionActive = false;
+            _cpuReading = null;
+            if (!_disposed) Fail("Не удалось включить датчики CPU", exception);
+        }
+        finally
+        {
+            IsStartingCpuSensors = false;
+            if (!_disposed) NotifyState();
+        }
+    }
+
+    private void OnCpuTemperatureUpdated(CpuTemperatureReading reading)
+    {
+        if (_dispatcher.HasShutdownStarted) return;
+        _dispatcher.BeginInvoke(new Action(() =>
+        {
+            if (_disposed || !_cpuSessionActive || !Overlays.IsVisible(OverlayKind.Performance)) return;
+            _cpuReading = reading;
+            LatestPerformance = LatestPerformance with { CpuTemperature = reading.Temperature, CpuStatus = reading.Status };
+            Overlays.Get(OverlayKind.Performance)?.Render(LatestPerformance);
+            StateChanged?.Invoke();
+        }));
+    }
+
+    private void StopCpuSensors()
+    {
+        _cpuSessionActive = false;
+        _cpuSession.Stop();
+        _cpuReading = null;
+        LatestPerformance = default;
+    }
+
+    internal int? CpuSensorProcessIdForSmoke => _smokeTest ? _cpuSession.ProcessId : null;
+    internal void SetPerformanceForSmoke(PerformanceSnapshot snapshot)
+    {
+        if (!_smokeTest) throw new InvalidOperationException("Test readings are restricted to smoke mode.");
+        OnPerformanceUpdated(snapshot);
     }
 
     private void OnClickerFinished(ClickerCompletion completion)
@@ -299,8 +390,10 @@ public sealed class AppController : IDisposable
         _ticker.Stop();
         _clicker.Finished -= OnClickerFinished;
         _hardware.Updated -= OnPerformanceUpdated;
+        _cpuSession.Updated -= OnCpuTemperatureUpdated;
         _clicker.Dispose();
         _hardware.Dispose();
+        _cpuSession.Dispose();
         _hotkeys?.Dispose();
     }
 

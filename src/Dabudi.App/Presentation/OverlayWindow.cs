@@ -25,6 +25,7 @@ public sealed class OverlayWindow : Window
     private AppSettings _settings;
     private string _device;
     private double _effectsTop = 100;
+    private bool _positioning;
 
     public OverlayWindow(OverlayKind kind, AppSettings settings)
     {
@@ -39,6 +40,9 @@ public sealed class OverlayWindow : Window
         ShowInTaskbar = false;
         ShowActivated = false;
         Topmost = true;
+        WindowStartupLocation = WindowStartupLocation.Manual;
+        // A layered window must not paint at WPF's provisional coordinates.
+        Opacity = 0;
         switch (kind)
         {
             case OverlayKind.Effects:
@@ -75,7 +79,11 @@ public sealed class OverlayWindow : Window
                 break;
         }
         SourceInitialized += (_, _) => ApplyNativeStyles();
-        Loaded += (_, _) => SchedulePosition();
+        Loaded += (_, _) =>
+        {
+            PositionNow();
+            Opacity = 1;
+        };
         MouseLeftButtonDown += (_, e) =>
         {
             if (_settings.AllowOverlayDragging && _kind != OverlayKind.Crosshair && e.LeftButton == MouseButtonState.Pressed)
@@ -165,7 +173,7 @@ public sealed class OverlayWindow : Window
             Width = Height = settings.CrosshairSize;
             _crosshair.Stroke = Theme.Brush(settings.CrosshairColor);
         }
-        if (IsVisible) SchedulePosition();
+        if (IsVisible) PositionNow();
     }
 
     private void ApplyNativeStyles()
@@ -177,29 +185,61 @@ public sealed class OverlayWindow : Window
     internal void AvoidPerformanceOverlap(OverlayWindow? performance)
     {
         _effectsTop = performance != null && performance._device == _device ? 18 + performance.Height + 16 : 100;
-        SchedulePosition();
+        if (IsVisible) PositionNow();
     }
 
-    public void SchedulePosition()
+    internal void ShowPositioned()
     {
-        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+        new WindowInteropHelper(this).EnsureHandle();
+        PositionNow();
+        Show();
+    }
+
+    internal PixelRect AnchorBounds()
+    {
+        var rect = WindowsDesktop.WindowBounds(new WindowInteropHelper(this).Handle);
+        var displays = WindowsDesktop.Displays();
+        var display = displays.FirstOrDefault(item => item.Device == _device) ?? displays[0];
+        var (anchor, marginX, marginY) = Placement();
+        var (x, y) = OverlayPlacement.Calculate(display.Bounds, display.WorkArea, rect.Width, rect.Height,
+            VisualTreeHelper.GetDpi(this).DpiScaleX, anchor, marginX, marginY);
+        return new(x, y, x + rect.Width, y + rect.Height);
+    }
+
+    private (OverlayAnchor Anchor, double X, double Y) Placement() => _kind switch
+    {
+        OverlayKind.Crosshair => (OverlayAnchor.Center, 0, 0),
+        OverlayKind.Stopwatch => (OverlayAnchor.TopLeft, 16, 16),
+        OverlayKind.Effects => (OverlayAnchor.TopRight, 10, _effectsTop),
+        _ => (OverlayAnchor.TopRight, 18, 18)
+    };
+
+    private void PositionNow()
+    {
+        var handle = new WindowInteropHelper(this).Handle;
+        if (handle == 0 || _positioning) return;
+        _positioning = true;
+        try
         {
-            if (!IsVisible) return;
-            var (anchor, x, y) = _kind switch
+            var (anchor, x, y) = Placement();
+            // Moving to another monitor can synchronously change DPI and the native size.
+            // Settle both while still transparent, before the first visible frame.
+            for (var attempt = 0; attempt < 3; attempt++)
             {
-                OverlayKind.Crosshair => (OverlayAnchor.Center, 0d, 0d),
-                OverlayKind.Stopwatch => (OverlayAnchor.TopLeft, 16d, 16d),
-                OverlayKind.Effects => (OverlayAnchor.TopRight, 10d, _effectsTop),
-                _ => (OverlayAnchor.TopRight, 18d, 18d)
-            };
-            WindowsDesktop.Position(new WindowInteropHelper(this).Handle, _device, anchor, x, y);
-        }));
+                UpdateLayout();
+                var before = WindowsDesktop.WindowBounds(handle);
+                WindowsDesktop.Position(handle, _device, anchor, x, y);
+                UpdateLayout();
+                if (WindowsDesktop.WindowBounds(handle) == before) break;
+            }
+        }
+        finally { _positioning = false; }
     }
 
     protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
     {
         base.OnDpiChanged(oldDpi, newDpi);
-        SchedulePosition();
+        PositionNow();
     }
 
     public void Render(EffectsSnapshot state)

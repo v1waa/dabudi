@@ -38,7 +38,7 @@ public readonly record struct Shortcut(int VirtualKey = 0, ShortcutModifiers Mod
     {
         AppAction.RestartEffects => "Запустить / перезапустить таймеры DBD",
         AppAction.CloseEffects => "Закрыть таймеры DBD",
-        AppAction.ToggleStopwatch => "Секундомер: пуск / пауза / продолжить",
+        AppAction.ToggleStopwatch => "Секундомер: запуск / остановка / запуск с нуля",
         AppAction.ResetStopwatch => "Сбросить и закрыть секундомер",
         AppAction.ToggleCrosshair => "Показать / скрыть прицел",
         AppAction.TogglePerformance => "Показать / скрыть мониторинг",

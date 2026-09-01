@@ -1,6 +1,6 @@
 namespace Dabudi.Core;
 
-public enum StopwatchState { Idle, Running, Paused }
+public enum StopwatchState { Idle, Running, Stopped }
 
 public sealed class ElapsedTimer(TimeProvider? timeProvider = null)
 {
@@ -16,10 +16,11 @@ public sealed class ElapsedTimer(TimeProvider? timeProvider = null)
         if (State == StopwatchState.Running)
         {
             _accumulated = Elapsed;
-            State = StopwatchState.Paused;
+            State = StopwatchState.Stopped;
         }
         else
         {
+            _accumulated = TimeSpan.Zero;
             _started = _time.GetTimestamp();
             State = StopwatchState.Running;
         }

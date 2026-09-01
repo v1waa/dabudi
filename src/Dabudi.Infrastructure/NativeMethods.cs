@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using Microsoft.Win32.SafeHandles;
 
 namespace Dabudi.Infrastructure;
 
@@ -7,6 +8,9 @@ namespace Dabudi.Infrastructure;
 [SupportedOSPlatform("windows")]
 internal static class NativeMethods
 {
+    [DllImport("kernel32.dll", EntryPoint = "CreateFileW", CharSet = CharSet.Unicode, SetLastError = true)]
+    internal static extern SafeFileHandle CreateFile(string path, uint access, uint share, nint security,
+        uint creation, uint attributes, nint template);
     [StructLayout(LayoutKind.Sequential)]
     internal struct Point { public int X, Y; }
     [StructLayout(LayoutKind.Sequential)]

@@ -8,7 +8,7 @@ using LibreHardwareMonitor.Hardware;
 namespace Dabudi.Infrastructure;
 
 [SupportedOSPlatform("windows")]
-public sealed class HardwareMonitor(AppLog log) : IDisposable
+public sealed class HardwareMonitor(AppLog log, bool cpuOnly = false) : IDisposable
 {
     private readonly CancellationTokenSource _lifetime = new();
     private readonly HashSet<string> _reported = new();
@@ -29,7 +29,8 @@ public sealed class HardwareMonitor(AppLog log) : IDisposable
     {
         Computer? computer = null;
         var hardwareAttempted = false;
-        var nvidia = FindNvidiaSmi();
+        var nvidia = cpuOnly ? null : FindNvidiaSmi();
+        var access = CpuTemperatureStatus.Checking;
         try
         {
             while (!_lifetime.IsCancellationRequested)
@@ -39,7 +40,14 @@ public sealed class HardwareMonitor(AppLog log) : IDisposable
                     if (!hardwareAttempted)
                     {
                         hardwareAttempted = true;
-                        computer = new Computer { IsCpuEnabled = true, IsGpuEnabled = true };
+                        try { access = CpuSensorAccess.Probe(); }
+                        catch (Exception exception)
+                        {
+                            access = CpuTemperatureStatus.Failed;
+                            ReportOnce("CPU driver access probe failed", exception);
+                        }
+                        log.Write("CPU sensor access: " + access);
+                        computer = new Computer { IsCpuEnabled = access == CpuTemperatureStatus.Ready, IsGpuEnabled = !cpuOnly };
                         try { computer.Open(); }
                         catch (Exception exception)
                         {
@@ -65,8 +73,16 @@ public sealed class HardwareMonitor(AppLog log) : IDisposable
                         gpuTemperature ??= fallback.Temperature;
                     }
                     var (usedMemory, totalMemory) = ReadMemory();
-                    var snapshot = new PerformanceSnapshot(ReadCpuPercent(), cpuTemperature,
-                        gpuPercent, gpuTemperature, usedMemory, totalMemory);
+                    var reading = access == CpuTemperatureStatus.Ready
+                        ? CpuTemperatureReading.FromSensor(cpuTemperature, driverReady: true, canAccess: true)
+                        : new CpuTemperatureReading(null, access);
+                    var snapshot = new PerformanceSnapshot(ReadCpuPercent(), reading.Temperature,
+                        gpuPercent, gpuTemperature, usedMemory, totalMemory) { CpuStatus = reading.Status };
+                    if (reading.Status == CpuTemperatureStatus.Unavailable && _reported.Add("CPU report"))
+                    {
+                        try { log.Write("CPU temperature unavailable. " + computer?.GetReport()); }
+                        catch (Exception exception) { ReportOnce("CPU report unavailable", exception); }
+                    }
                     if (_enabled && !_lifetime.IsCancellationRequested) Updated?.Invoke(snapshot);
                 }
                 else if (computer != null || hardwareAttempted)

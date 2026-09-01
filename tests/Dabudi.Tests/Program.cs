@@ -6,17 +6,36 @@ using Dabudi.Infrastructure;
 
 var tests = new (string Name, Func<Task> Run)[]
 {
-    ("Stopwatch pauses, resumes and resets", Sync(() =>
+    ("Stopwatch stops, retains the result and starts a fresh run at zero", Sync(() =>
     {
         var clock = new ManualClock();
         var timer = new ElapsedTimer(clock);
         timer.Toggle(); clock.Advance(3); timer.Toggle();
         clock.Advance(50);
-        Check(timer.State == StopwatchState.Paused && timer.Elapsed == TimeSpan.FromSeconds(3));
-        timer.Toggle(); clock.Advance(2);
-        Check(timer.Elapsed == TimeSpan.FromSeconds(5));
+        Check(timer.State == StopwatchState.Stopped && timer.Elapsed == TimeSpan.FromSeconds(3));
+        timer.Toggle();
+        Check(timer.State == StopwatchState.Running && timer.Elapsed == TimeSpan.Zero);
+        clock.WallClock = DateTimeOffset.UtcNow.AddYears(-2);
+        clock.Advance(2);
+        Check(timer.Elapsed == TimeSpan.FromSeconds(2));
         timer.Reset(); clock.Advance(7);
         Check(timer.State == StopwatchState.Idle && timer.Elapsed == TimeSpan.Zero);
+    })),
+    ("CPU temperatures require valid readings and real driver access", Sync(() =>
+    {
+        Check(CpuTemperatureReading.FromSensor(65, true, true) == new CpuTemperatureReading(65, CpuTemperatureStatus.Ready));
+        Check(CpuTemperatureReading.FromSensor(65, false, true) == new CpuTemperatureReading(null, CpuTemperatureStatus.DriverMissing));
+        Check(CpuTemperatureReading.FromSensor(0, true, false) == new CpuTemperatureReading(null, CpuTemperatureStatus.AccessRequired));
+        foreach (var value in new double?[] { null, double.NaN, double.PositiveInfinity, -21, 151 })
+            Check(CpuTemperatureReading.FromSensor(value, true, true) == new CpuTemperatureReading(null, CpuTemperatureStatus.Unavailable));
+    })),
+    ("Overlay anchors use physical monitor origins and scaled margins", Sync(() =>
+    {
+        var bounds = new PixelRect(-2560, -300, 0, 1140);
+        var work = new PixelRect(-2520, -270, 0, 1080);
+        Check(OverlayPlacement.Calculate(bounds, work, 366, 189, 1.5, OverlayAnchor.TopRight, 18, 18) == (-393, -243));
+        Check(OverlayPlacement.Calculate(bounds, work, 600, 100, 2, OverlayAnchor.TopLeft, 16, 16) == (-2488, -238));
+        Check(OverlayPlacement.Calculate(bounds, work, 30, 30, 2, OverlayAnchor.Center, 0, 0) == (-1295, 405));
     })),
     ("Zero durations disable effects", Sync(() =>
     {
