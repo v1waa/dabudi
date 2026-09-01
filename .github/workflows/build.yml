@@ -31,7 +31,7 @@ jobs:
           global-json-file: global.json
       - name: Build, test, publish and run WPF
         shell: pwsh
-        run: ./scripts/build.ps1 -UpdateLockFiles
+        run: ./scripts/build.ps1
       - name: Upload dependency locks
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7

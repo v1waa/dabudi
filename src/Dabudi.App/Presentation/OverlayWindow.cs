@@ -21,6 +21,7 @@ public sealed class OverlayWindow : Window
     private readonly TextBlock _gpuValue = Text("—", 14);
     private readonly TextBlock _ramValue = Text("—", 14);
     private readonly Canvas _crosshair = new() { Width = 80, Height = 80 };
+    private readonly Border? _frame;
     private AppSettings _settings;
     private string _device;
 
@@ -61,10 +62,9 @@ public sealed class OverlayWindow : Window
         if (kind == OverlayKind.Crosshair) Content = _crosshair;
         else
         {
-            var frame = new Border { CornerRadius = new(9), BorderThickness = new(1), Padding = new(14), Child = body };
-            frame.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
-            frame.Background = new SolidColorBrush(Color.FromArgb(232, 28, 31, 31));
-            Content = frame;
+            _frame = new Border { CornerRadius = new(9), BorderThickness = new(1), Padding = new(14), Child = body };
+            _frame.SetResourceReference(Border.BorderBrushProperty, "BorderBrush");
+            Content = _frame;
         }
         SourceInitialized += (_, _) => ApplyNativeStyles();
         Loaded += (_, _) => SchedulePosition();
@@ -125,6 +125,11 @@ public sealed class OverlayWindow : Window
         _settings = settings;
         if (!string.IsNullOrEmpty(settings.MonitorDevice)) _device = settings.MonitorDevice;
         else if (monitorChanged) _device = WindowsDesktop.ForegroundDisplay();
+        if (_frame != null)
+        {
+            var panelColor = (Color)ColorConverter.ConvertFromString(settings.PanelColor);
+            _frame.Background = new SolidColorBrush(Color.FromArgb(232, panelColor.R, panelColor.G, panelColor.B));
+        }
         ApplyNativeStyles();
         if (_kind == OverlayKind.Crosshair)
         {
