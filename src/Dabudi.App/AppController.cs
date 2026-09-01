@@ -10,7 +10,7 @@ public sealed class AppController : IDisposable
     private readonly bool _smokeTest;
     private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
     private readonly DispatcherTimer _ticker = new(DispatcherPriority.Render) { Interval = TimeSpan.FromMilliseconds(33) };
-    private readonly ClickerEngine _clicker = new(new WindowsInputSender());
+    private readonly ClickerEngine _clicker;
     private readonly HardwareMonitor _hardware;
     private HotkeyRegistry? _hotkeys;
     private long _suppressUntil;
@@ -22,6 +22,7 @@ public sealed class AppController : IDisposable
     public EffectTimers Effects { get; } = new();
     public PerformanceSnapshot LatestPerformance { get; private set; }
     public bool IsClickerRunning => _clicker.IsRunning;
+    public TimeSpan? ClickerRemainingDelay => _clicker.RemainingDelay;
     public bool IsExiting { get; private set; }
     public string Status { get; private set; }
     public bool StatusIsError { get; private set; }
@@ -36,12 +37,13 @@ public sealed class AppController : IDisposable
         _log = log;
         _canSave = loaded.CanSave;
         _smokeTest = smokeTest;
+        _clicker = new(smokeTest ? new SmokeInputSender() : new WindowsInputSender());
         Settings = loaded.Settings;
         Status = loaded.Notice ?? "Готово";
         StatusIsError = loaded.Notice != null;
         _hardware = new(log);
         _hardware.Updated += OnPerformanceUpdated;
-        _clicker.Failed += OnClickerFailed;
+        _clicker.Finished += OnClickerFinished;
         _ticker.Tick += (_, _) => Tick();
         Theme.Apply(Settings);
     }
@@ -128,9 +130,13 @@ public sealed class AppController : IDisposable
                     {
                         var errors = Settings.Validate();
                         if (errors.Count > 0) throw new InvalidOperationException(string.Join(" ", errors));
-                        _clicker.Start(Settings.ClickTarget, Settings.ClicksPerSecond);
+                        _clicker.Start(Settings.ClickTarget, Settings.ClicksPerSecond, Settings.ClickMode, Settings.ClickDelaySeconds);
                     }
-                    Report(_clicker.IsRunning ? "Автокликер включён. Переключитесь в нужное окно." : "Автокликер выключен");
+                    Report(_clicker.IsRunning
+                        ? Settings.ClickMode == ClickerMode.OnceAfterDelay
+                            ? "Нажатие запланировано. Переключитесь в нужное окно; повторный запуск отменяет ожидание."
+                            : "Автокликер включён. Переключитесь в нужное окно."
+                        : "Автокликер остановлен; ожидающее нажатие отменено");
                     break;
                 case AppAction.StopAll:
                     StopAll();
@@ -183,7 +189,7 @@ public sealed class AppController : IDisposable
 
     private void NotifyState()
     {
-        _ticker.IsEnabled = Effects.IsActive || Elapsed.State == StopwatchState.Running;
+        _ticker.IsEnabled = Effects.IsActive || Elapsed.State == StopwatchState.Running || _clicker.RemainingDelay.HasValue;
         StateChanged?.Invoke();
     }
 
@@ -199,13 +205,15 @@ public sealed class AppController : IDisposable
         }));
     }
 
-    private void OnClickerFailed(Exception exception)
+    private void OnClickerFinished(ClickerCompletion completion)
     {
         if (_dispatcher.HasShutdownStarted) return;
         _dispatcher.BeginInvoke(new Action(() =>
         {
-            if (_disposed) return;
-            Fail("Автокликер остановлен", exception);
+            if (_disposed || completion.RunId != _clicker.RunId) return;
+            if (completion.Error is { } error) Fail("Автокликер остановлен", error);
+            else Report(completion.InputSent ? "Отложенное нажатие выполнено"
+                : "Нажатие пропущено: активно окно dabudi или нет доступного окна. Запустите таймер заново.");
             NotifyState();
         }));
     }
@@ -243,7 +251,8 @@ public sealed class AppController : IDisposable
             Fail("Не удалось сохранить настройки", exception);
             return false;
         }
-        if (settings.ClickTarget != Settings.ClickTarget || settings.ClicksPerSecond != Settings.ClicksPerSecond)
+        if (settings.ClickTarget != Settings.ClickTarget || settings.ClicksPerSecond != Settings.ClicksPerSecond
+            || settings.ClickMode != Settings.ClickMode || settings.ClickDelaySeconds != Settings.ClickDelaySeconds)
             _clicker.Stop();
         Settings = settings;
         Theme.Apply(Settings);
@@ -288,10 +297,15 @@ public sealed class AppController : IDisposable
         StopAll();
         _disposed = true;
         _ticker.Stop();
-        _clicker.Failed -= OnClickerFailed;
+        _clicker.Finished -= OnClickerFinished;
         _hardware.Updated -= OnPerformanceUpdated;
         _clicker.Dispose();
         _hardware.Dispose();
         _hotkeys?.Dispose();
+    }
+
+    private sealed class SmokeInputSender : IInputSender
+    {
+        public bool Send(InputTarget target) => true;
     }
 }

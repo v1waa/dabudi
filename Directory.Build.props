@@ -8,7 +8,7 @@
     <Deterministic>true</Deterministic>
     <DebugType>embedded</DebugType>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-    <Version>3.0.0</Version>
+    <Version>3.1.0</Version>
     <Authors>dabudi contributors</Authors>
     <RepositoryUrl>https://github.com/v1waa/dabudi</RepositoryUrl>
     <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>

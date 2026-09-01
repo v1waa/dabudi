@@ -50,7 +50,7 @@ public static class WindowsDesktop
         NativeMethods.DwmSetWindowAttribute(handle, 20, ref enabled, sizeof(int));
     }
 
-    public static void Position(nint handle, string device, OverlayAnchor anchor)
+    public static void Position(nint handle, string device, OverlayAnchor anchor, double horizontalMargin = 16, double verticalMargin = 16)
     {
         var displays = Displays();
         var display = displays.FirstOrDefault(d => d.Device == device) ?? displays.FirstOrDefault();
@@ -58,17 +58,19 @@ public static class WindowsDesktop
         var area = anchor == OverlayAnchor.Center ? display.Bounds : display.WorkArea;
         var width = rect.Right - rect.Left;
         var height = rect.Bottom - rect.Top;
-        var margin = (int)Math.Round(16 * Math.Max(96, NativeMethods.GetDpiForWindow(handle)) / 96d);
+        var scale = Math.Max(96, NativeMethods.GetDpiForWindow(handle)) / 96d;
+        var marginX = (int)Math.Round(horizontalMargin * scale);
+        var marginY = (int)Math.Round(verticalMargin * scale);
         var x = anchor switch
         {
-            OverlayAnchor.TopLeft => area.Left + margin,
+            OverlayAnchor.TopLeft => area.Left + marginX,
             OverlayAnchor.Center => area.Left + (area.Width - width) / 2,
-            _ => area.Right - width - margin
+            _ => area.Right - width - marginX
         };
         var y = anchor switch
         {
             OverlayAnchor.Center or OverlayAnchor.RightCenter => area.Top + (area.Height - height) / 2,
-            _ => area.Top + margin
+            _ => area.Top + marginY
         };
         if (!NativeMethods.SetWindowPos(handle, -1, x, y, 0, 0, 0x0011))
             throw new Win32Exception(Marshal.GetLastWin32Error(), "Не удалось разместить оверлей.");

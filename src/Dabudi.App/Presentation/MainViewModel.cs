@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 namespace Dabudi.Presentation;
 
 public sealed record DisplayOption(string Device, string Label);
+public sealed record ClickModeOption(ClickerMode Value, string Label);
 
 public sealed class HotkeyRow(AppAction action, AppController controller) : ObservableObject
 {
@@ -17,12 +18,31 @@ public sealed class HotkeyRow(AppAction action, AppController controller) : Obse
 public sealed class MainViewModel : ObservableObject
 {
     private readonly AppController _controller;
-    private string _ds = "", _end = "", _cps = "", _size = "", _monitor = "";
+    private string _ds = "", _end = "", _cps = "", _delay = "", _size = "", _monitor = "";
+    private ClickerMode _clickMode;
     private string _background = "", _panel = "", _accent = "", _text = "", _crosshair = "";
     private bool _startup, _drag;
     public string DsSeconds { get => _ds; set => Set(ref _ds, value); }
     public string EndSeconds { get => _end; set => Set(ref _end, value); }
     public string ClicksPerSecond { get => _cps; set => Set(ref _cps, value); }
+    public string ClickDelaySeconds { get => _delay; set => Set(ref _delay, value); }
+    public ClickerMode SelectedClickMode
+    {
+        get => _clickMode;
+        set
+        {
+            Set(ref _clickMode, value);
+            Changed(nameof(IsDelayedClick));
+            Changed(nameof(ClickerTimingLabel));
+            Changed(nameof(ClickerTimingHint));
+            Changed(nameof(ClickerButton));
+        }
+    }
+    public bool IsDelayedClick => SelectedClickMode == ClickerMode.OnceAfterDelay;
+    public string ClickerTimingLabel => IsDelayedClick ? "Нажать через" : "Скорость";
+    public string ClickerTimingHint => IsDelayedClick ? "Секунды (0,1–86 400)" : "Кликов в секунду (1–50)";
+    public IReadOnlyList<ClickModeOption> ClickModes { get; } =
+    [new(ClickerMode.Repeat, "Повторять нажатия"), new(ClickerMode.OnceAfterDelay, "Одно нажатие через…")];
     public string CrosshairSize { get => _size; set => Set(ref _size, value); }
     public string SelectedMonitor { get => _monitor; set => Set(ref _monitor, value); }
     public string BackgroundColor { get => _background; set => Set(ref _background, value); }
@@ -34,8 +54,18 @@ public sealed class MainViewModel : ObservableObject
     public bool AllowDragging { get => _drag; set => Set(ref _drag, value); }
     public ObservableCollection<DisplayOption> Displays { get; } = new();
     public IReadOnlyList<HotkeyRow> Hotkeys { get; }
+    public HotkeyRow CrosshairHotkey => KeyRow(AppAction.ToggleCrosshair);
+    public HotkeyRow StopwatchHotkey => KeyRow(AppAction.ToggleStopwatch);
+    public HotkeyRow ResetStopwatchHotkey => KeyRow(AppAction.ResetStopwatch);
+    public HotkeyRow ClickerHotkey => KeyRow(AppAction.ToggleClicker);
+    public HotkeyRow PerformanceHotkey => KeyRow(AppAction.TogglePerformance);
+    public HotkeyRow StartEffectsHotkey => KeyRow(AppAction.RestartEffects);
+    public HotkeyRow CloseEffectsHotkey => KeyRow(AppAction.CloseEffects);
+    public HotkeyRow StopAllHotkey => KeyRow(AppAction.StopAll);
+    public HotkeyRow ExitHotkey => KeyRow(AppAction.Exit);
+    private HotkeyRow KeyRow(AppAction action) => Hotkeys.First(row => row.Action == action);
     public string Status => _controller.Status;
-    public Brush StatusBrush => _controller.StatusIsError ? Theme.Brush("#FFC1B6") : (Brush)Application.Current.Resources["MutedBrush"];
+    public Brush StatusBrush => (Brush)Application.Current.Resources[_controller.StatusIsError ? "DangerBrush" : "MutedTextBrush"];
     public string ElapsedDisplay => OverlayWindow.FormatTime(_controller.Elapsed.Elapsed);
     public string StopwatchStatus => _controller.Elapsed.State switch
     {
@@ -45,10 +75,14 @@ public sealed class MainViewModel : ObservableObject
     {
         StopwatchState.Running => "Пауза", StopwatchState.Paused => "Продолжить", _ => "Запустить"
     };
-    public string ClickerStatus => _controller.IsClickerRunning ? "Включён" : "Выключен";
-    public string ClickerButton => _controller.IsClickerRunning ? "Выключить" : "Включить";
+    public string ClickerStatus => _controller.ClickerRemainingDelay is { } remaining ? $"Через {remaining.TotalSeconds:0.0} с"
+        : _controller.IsClickerRunning ? "Работает" : "Остановлен";
+    public string ClickerButton => _controller.IsClickerRunning
+        ? _controller.ClickerRemainingDelay.HasValue ? "Отменить" : "Остановить"
+        : IsDelayedClick ? "Запланировать" : "Запустить";
     public string ClickTarget => KeyNames.Format(_controller.Settings.ClickTarget);
     public string CrosshairButton => _controller.Overlays.IsVisible(OverlayKind.Crosshair) ? "Скрыть" : "Показать";
+    public bool IsCrosshairVisible => _controller.Overlays.IsVisible(OverlayKind.Crosshair);
     public string PerformanceButton => _controller.Overlays.IsVisible(OverlayKind.Performance) ? "Скрыть" : "Показать";
     public string EffectsStatus => _controller.Effects.IsActive ? "Таймеры работают" : "Таймеры остановлены";
     public string PerformanceStatus => _controller.Overlays.IsVisible(OverlayKind.Performance) ? "Включён" : "Выключен";
@@ -83,7 +117,7 @@ public sealed class MainViewModel : ObservableObject
         StopAll = Command(AppAction.StopAll);
         Exit = Command(AppAction.Exit);
         Save = new RelayCommand(() => SaveSettings());
-        ResetTheme = new RelayCommand(() => LoadColors(new AppSettings()));
+        ResetTheme = new RelayCommand(() => { LoadColors(new AppSettings()); SaveSettings(); });
         OpenSettings = new RelayCommand(controller.OpenSettingsDirectory);
         OpenLogs = new RelayCommand(controller.OpenLogDirectory);
         Hotkeys = Enum.GetValues<AppAction>().Select(action => new HotkeyRow(action, controller)).ToArray();
@@ -119,6 +153,8 @@ public sealed class MainViewModel : ObservableObject
         DsSeconds = settings.DecisiveStrikeSeconds.ToString(CultureInfo.InvariantCulture);
         EndSeconds = settings.EnduranceSeconds.ToString(CultureInfo.InvariantCulture);
         ClicksPerSecond = settings.ClicksPerSecond.ToString(CultureInfo.InvariantCulture);
+        ClickDelaySeconds = settings.ClickDelaySeconds.ToString(CultureInfo.CurrentCulture);
+        SelectedClickMode = settings.ClickMode;
         CrosshairSize = settings.CrosshairSize.ToString(CultureInfo.InvariantCulture);
         RunAtStartup = settings.RunAtStartup;
         AllowDragging = settings.AllowOverlayDragging;
@@ -135,7 +171,7 @@ public sealed class MainViewModel : ObservableObject
         CrosshairColor = settings.CrosshairColor;
     }
 
-    private bool SaveSettings()
+    public bool SaveSettings()
     {
         if (!int.TryParse(DsSeconds, out var ds) || !int.TryParse(EndSeconds, out var end)
             || !int.TryParse(ClicksPerSecond, out var cps) || !int.TryParse(CrosshairSize, out var size))
@@ -143,9 +179,16 @@ public sealed class MainViewModel : ObservableObject
             _controller.Report("Длительность, частота нажатий и размер прицела должны быть целыми числами.", true);
             return false;
         }
+        if (!double.TryParse(ClickDelaySeconds.Trim().Replace(',', '.'), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
+            CultureInfo.InvariantCulture, out var delay))
+        {
+            _controller.Report("Задержка нажатия задаётся в секундах, например 5 или 1,5.", true);
+            return false;
+        }
         var settings = _controller.Settings with
         {
             DecisiveStrikeSeconds = ds, EnduranceSeconds = end, ClicksPerSecond = cps, CrosshairSize = size,
+            ClickMode = SelectedClickMode, ClickDelaySeconds = delay,
             RunAtStartup = RunAtStartup, AllowOverlayDragging = AllowDragging, MonitorDevice = SelectedMonitor ?? "",
             BackgroundColor = BackgroundColor.Trim(), PanelColor = PanelColor.Trim(), AccentColor = AccentColor.Trim(),
             TextColor = TextColor.Trim(), CrosshairColor = CrosshairColor.Trim()
@@ -158,7 +201,7 @@ public sealed class MainViewModel : ObservableObject
     private void RefreshState()
     {
         foreach (var name in new[] { nameof(ElapsedDisplay), nameof(StopwatchStatus), nameof(StopwatchButton),
-            nameof(ClickerStatus), nameof(ClickerButton), nameof(CrosshairButton), nameof(PerformanceButton),
+            nameof(ClickerStatus), nameof(ClickerButton), nameof(CrosshairButton), nameof(IsCrosshairVisible), nameof(PerformanceButton),
             nameof(EffectsStatus), nameof(PerformanceStatus) }) Changed(name);
     }
 }

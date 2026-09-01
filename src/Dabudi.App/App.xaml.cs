@@ -79,16 +79,46 @@ public partial class App : Application
             controller.Run(AppAction.ToggleStopwatch);
             await Task.Delay(80);
             if (controller.Elapsed.Elapsed <= paused) throw new InvalidOperationException("Smoke check: resume failed.");
-            for (var index = 0; index < 4; index++)
+            for (var index = 0; index < 3; index++)
             {
                 window.SelectTabForSmoke(index);
                 await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
                 window.UpdateLayout();
                 SaveScreenshot(window, Path.Combine(_smokeOutput!, $"tab-{index}.png"));
             }
+            window.ScrollTabForSmoke(toEnd: true);
+            await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+            SaveScreenshot(window, Path.Combine(_smokeOutput!, "interface-overlays.png"));
             foreach (var kind in Enum.GetValues<OverlayKind>())
                 if (controller.Overlays.Get(kind) is { } overlay)
                     SaveScreenshot(overlay, Path.Combine(_smokeOutput!, $"overlay-{kind}.png"));
+            window.SelectTabForSmoke(0);
+            if (!window.SetDelayForSmoke("5")) throw new InvalidOperationException("Smoke check: delay save failed.");
+            window.ToggleClickerForSmoke();
+            await Task.Delay(80);
+            if (!controller.IsClickerRunning || controller.ClickerRemainingDelay <= TimeSpan.Zero)
+                throw new InvalidOperationException("Smoke check: delayed click did not start.");
+            window.UpdateLayout();
+            SaveScreenshot(window, Path.Combine(_smokeOutput!, "clicker-delay.png"));
+            window.HideToTray();
+            if (window.IsVisible || controller.IsExiting || !controller.IsClickerRunning || controller.Overlays.Count != 4)
+                throw new InvalidOperationException("Smoke check: hiding the window stopped the application.");
+            window.Restore();
+            window.ToggleClickerForSmoke();
+            if (controller.IsClickerRunning) throw new InvalidOperationException("Smoke check: repeat command did not cancel the delay.");
+            if (!window.SetDelayForSmoke("0,1") || controller.Settings.ClickDelaySeconds != .1)
+                throw new InvalidOperationException("Smoke check: fractional delay did not save.");
+            window.ToggleClickerForSmoke();
+            await Task.Delay(400);
+            if (controller.IsClickerRunning || controller.Status != "Отложенное нажатие выполнено")
+                throw new InvalidOperationException("Smoke check: delayed click did not complete and refresh the UI.");
+            window.Width = window.MinWidth;
+            window.Height = window.MinHeight;
+            await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+            SaveScreenshot(window, Path.Combine(_smokeOutput!, "general-minimum-size.png"));
+            window.ScrollTabForSmoke(toEnd: true);
+            await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+            SaveScreenshot(window, Path.Combine(_smokeOutput!, "general-minimum-bottom.png"));
             controller.Run(AppAction.StopAll);
             if (controller.Overlays.Count != 0 || controller.Elapsed.State != StopwatchState.Idle || controller.Effects.IsActive || controller.IsClickerRunning)
                 throw new InvalidOperationException("Smoke check: Stop All left a tool running.");
@@ -98,14 +128,19 @@ public partial class App : Application
             if (controller.Effects.Snapshot().Endurance.Enabled)
                 throw new InvalidOperationException("Smoke check: zero-duration effect was enabled.");
             controller.Run(AppAction.StopAll);
+            if (!window.SetDelayForSmoke("5")) throw new InvalidOperationException("Smoke check: closing setup failed.");
+            window.ToggleClickerForSmoke();
+            controller.Run(AppAction.ToggleStopwatch);
+            window.Close();
+            if (!controller.IsExiting || !IsClosing || controller.IsClickerRunning || controller.Overlays.Count != 0)
+                throw new InvalidOperationException("Smoke check: closing the window did not exit and stop all tools.");
             if (listener.Errors.Count != 0) throw new InvalidOperationException("Binding errors: " + string.Join("\n", listener.Errors));
             File.WriteAllText(Path.Combine(_smokeOutput!, "smoke-result.json"), JsonSerializer.Serialize(new
             {
                 passed = true, overlayCountAfterStop = controller.Overlays.Count,
-                bindingErrors = listener.Errors.Count, settingsSave = true
+                bindingErrors = listener.Errors.Count, settingsSave = true,
+                delayedClick = true, hideKeepsRunning = true, closeExits = true
             }));
-            IsClosing = true;
-            Shutdown(0);
         }
         catch (Exception exception) { FailStartup(exception); }
         finally { PresentationTraceSources.DataBindingSource.Listeners.Remove(listener); }

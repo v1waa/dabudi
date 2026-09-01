@@ -41,7 +41,7 @@ public partial class MainWindow : Window
     public void Restore()
     {
         Show();
-        WindowState = WindowState.Normal;
+        if (WindowState == WindowState.Minimized) WindowState = WindowState.Normal;
         Activate();
     }
 
@@ -130,7 +130,22 @@ public partial class MainWindow : Window
         _controller.ResumeHotkeys();
     }
 
-    private void HideToTray_Click(object sender, RoutedEventArgs e) { CancelCapture(); Hide(); }
+    public void HideToTray() { CancelCapture(); Hide(); }
+    private void HideToTray_Click(object sender, RoutedEventArgs e) => HideToTray();
+    private void Header_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.ClickCount == 2) ToggleMaximized();
+        else if (e.LeftButton == MouseButtonState.Pressed) DragMove();
+    }
+    private void WindowMinimize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+    private void WindowMaximize_Click(object sender, RoutedEventArgs e) => ToggleMaximized();
+    private void WindowClose_Click(object sender, RoutedEventArgs e) => Close();
+    private void ToggleMaximized() => WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+    private void Navigation_Checked(object sender, RoutedEventArgs e)
+    {
+        if (NavigationTabs != null && sender is RadioButton { Tag: string index })
+            NavigationTabs.SelectedIndex = int.Parse(index, CultureInfo.InvariantCulture);
+    }
     private void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (ReferenceEquals(e.OriginalSource, sender)) CancelCapture();
@@ -143,13 +158,10 @@ public partial class MainWindow : Window
 
     protected override void OnClosing(CancelEventArgs e)
     {
-        if (!_controller.IsExiting && !(Application.Current is App { IsClosing: true }))
-        {
-            e.Cancel = true;
-            CancelCapture();
-            Hide();
-        }
         base.OnClosing(e);
+        if (e.Cancel) return;
+        CancelCapture();
+        _controller.StopAll();
     }
 
     protected override void OnClosed(EventArgs e)
@@ -157,7 +169,26 @@ public partial class MainWindow : Window
         SystemEvents.DisplaySettingsChanged -= DisplaysChanged;
         _source?.RemoveHook(WndProc);
         base.OnClosed(e);
+        if (!_controller.IsExiting && Application.Current is not App { IsClosing: true })
+            _controller.Run(AppAction.Exit);
     }
 
-    internal void SelectTabForSmoke(int index) => NavigationTabs.SelectedIndex = index;
+    internal void SelectTabForSmoke(int index)
+    {
+        var button = index switch { 0 => navGeneral, 1 => navDbd, _ => navInterface };
+        button.IsChecked = true;
+    }
+    internal bool SetDelayForSmoke(string seconds)
+    {
+        _viewModel.SelectedClickMode = ClickerMode.OnceAfterDelay;
+        _viewModel.ClickDelaySeconds = seconds;
+        return _viewModel.SaveSettings();
+    }
+    internal void ToggleClickerForSmoke() => _viewModel.ToggleClicker.Execute(null);
+    internal void ScrollTabForSmoke(bool toEnd)
+    {
+        if (NavigationTabs.SelectedContent is not ScrollViewer scroll) return;
+        if (toEnd) scroll.ScrollToBottom();
+        else scroll.ScrollToTop();
+    }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Text.Json;
 using Dabudi.Core;
 using Dabudi.Infrastructure;
@@ -54,7 +55,8 @@ var tests = new (string Name, Func<Task> Run)[]
     ("Malformed settings normalize to valid values", Sync(() =>
     {
         var settings = new AppSettings { Shortcuts = null!, AccentColor = null!, MonitorDevice = null!,
-            EnduranceSeconds = -1, ClicksPerSecond = 500, ClickTarget = new((InputKind)999) };
+            EnduranceSeconds = -1, ClicksPerSecond = 500, ClickTarget = new((InputKind)999),
+            ClickMode = (ClickerMode)999, ClickDelaySeconds = double.NaN };
         Check(AppSettings.Normalize(settings).Validate().Count == 0);
     })),
     ("Legacy settings preserve disabled effects and key choices", Sync(() =>
@@ -74,8 +76,9 @@ var tests = new (string Name, Func<Task> Run)[]
     ("Settings save atomically and keep previous version", Sync(() => WithStore((store, _) =>
     {
         store.Save(new AppSettings());
-        store.Save(new AppSettings { EnduranceSeconds = 0 });
-        Check(store.Load().Settings.EnduranceSeconds == 0);
+        store.Save(new AppSettings { EnduranceSeconds = 0, ClickMode = ClickerMode.OnceAfterDelay, ClickDelaySeconds = 1.25 });
+        var loaded = store.Load().Settings;
+        Check(loaded.EnduranceSeconds == 0 && loaded.ClickMode == ClickerMode.OnceAfterDelay && loaded.ClickDelaySeconds == 1.25);
         using var backup = JsonDocument.Parse(File.ReadAllText(store.FilePath + ".bak"));
         Check(backup.RootElement.GetProperty("EnduranceSeconds").GetInt32() == 15);
         Check(!Directory.EnumerateFiles(store.DirectoryPath, "*.tmp").Any());
@@ -96,20 +99,49 @@ var tests = new (string Name, Func<Task> Run)[]
         Check(!store.Load().CanSave);
         Check(File.ReadAllText(store.FilePath) == "{\"SchemaVersion\":999}");
     }))),
+    ("Upgrade restores the classic defaults and preserves custom appearance", Sync(() => WithStore((store, _) =>
+    {
+        Directory.CreateDirectory(store.DirectoryPath);
+        File.WriteAllText(store.FilePath, """
+            {"SchemaVersion":3,"BackgroundColor":"#202323","PanelColor":"#2B2F2F",
+             "AccentColor":"#C2D8C4","TextColor":"#E8F2E9","CrosshairSize":24,"CrosshairColor":"#C2D8C4"}
+            """);
+        var loaded = store.Load();
+        Check(loaded.Notice == null && loaded.CanSave);
+        Check(loaded.Settings.BackgroundColor == "#222222" && loaded.Settings.PanelColor == "#222222");
+        Check(loaded.Settings.CrosshairSize == 15 && loaded.Settings.CrosshairColor == "#FFFFFF");
+        Check(loaded.Settings.ClickMode == ClickerMode.Repeat && loaded.Settings.ClickDelaySeconds == 5);
+        store.Save(loaded.Settings);
+        Check(store.Load().Settings.SchemaVersion == AppSettings.CurrentSchema);
+        var custom = AppSettings.Normalize(new AppSettings { SchemaVersion = 3, BackgroundColor = "#121212",
+            PanelColor = "#343434", CrosshairSize = 32, CrosshairColor = "#FF8800" });
+        Check(custom.BackgroundColor == "#121212" && custom.PanelColor == "#343434"
+            && custom.CrosshairSize == 32 && custom.CrosshairColor == "#FF8800");
+    }))),
+    ("Delay settings reject non-finite and out-of-range values", Sync(() =>
+    {
+        foreach (var delay in new[] { double.NaN, double.PositiveInfinity, -1, 0, .01, 86401 })
+            Check((new AppSettings { ClickDelaySeconds = delay }).Validate().Count > 0);
+        foreach (var delay in new[] { .1, 1.5, 86400 })
+            Check((new AppSettings { ClickDelaySeconds = delay }).Validate().Count == 0);
+    })),
     ("Clicker Stop waits for in-flight input and blocks later emissions", async () =>
     {
-        using var sender = new BlockingSender();
-        using var clicker = new ClickerEngine(sender);
-        clicker.Start(new(), 50);
-        await sender.Entered.Task.WaitAsync(TimeSpan.FromSeconds(3));
-        var stopping = Task.Run(clicker.Stop);
-        await Task.Delay(40);
-        Check(!stopping.IsCompleted);
-        sender.Release.Set();
-        await stopping.WaitAsync(TimeSpan.FromSeconds(3));
-        var count = sender.Count;
-        await Task.Delay(80);
-        Check(!clicker.IsRunning && sender.Count == count);
+        foreach (var mode in Enum.GetValues<ClickerMode>())
+        {
+            using var sender = new BlockingSender();
+            using var clicker = new ClickerEngine(sender);
+            clicker.Start(new(), 50, mode, .1);
+            await sender.Entered.Task.WaitAsync(TimeSpan.FromSeconds(3));
+            var stopping = Task.Run(clicker.Stop);
+            await Task.Delay(40);
+            Check(!stopping.IsCompleted);
+            sender.Release.Set();
+            await stopping.WaitAsync(TimeSpan.FromSeconds(3));
+            var count = sender.Count;
+            await Task.Delay(80);
+            Check(!clicker.IsRunning && sender.Count == count);
+        }
     }),
     ("Rapid stop/restart never leaves a clicker running", async () =>
     {
@@ -124,14 +156,70 @@ var tests = new (string Name, Func<Task> Run)[]
         await Task.Delay(80);
         Check(sender.Count == count && !clicker.IsRunning);
     }),
-    ("Input failure stops the clicker and reports the error", async () =>
+    ("Delayed input waits, emits exactly once and returns to idle", async () =>
     {
-        using var clicker = new ClickerEngine(new FailingSender());
-        var failed = new TaskCompletionSource<Exception>(TaskCreationOptions.RunContinuationsAsynchronously);
-        clicker.Failed += exception => failed.TrySetResult(exception);
-        clicker.Start(new(), 50);
-        var exception = await failed.Task.WaitAsync(TimeSpan.FromSeconds(3));
-        Check(exception is IOException && !clicker.IsRunning);
+        var sender = new CountingSender();
+        using var clicker = new ClickerEngine(sender);
+        var finished = CompletionSource(clicker);
+        var target = new InputTarget(InputKind.Keyboard, MouseButton.Left, 65);
+        var start = Stopwatch.GetTimestamp();
+        clicker.Start(target, 10, ClickerMode.OnceAfterDelay, .15);
+        Check(clicker.IsRunning && clicker.RemainingDelay > TimeSpan.Zero);
+        var result = await finished.Task.WaitAsync(TimeSpan.FromSeconds(3));
+        Check(Stopwatch.GetElapsedTime(start, sender.LastTimestamp) >= TimeSpan.FromMilliseconds(140));
+        Check(result.InputSent && result.Error == null && !clicker.IsRunning && clicker.RemainingDelay == null);
+        Check(sender.Targets.Single() == target);
+        await Task.Delay(200);
+        Check(sender.Count == 1);
+    }),
+    ("Replacing or cancelling a pending click cannot leave a later input", async () =>
+    {
+        var sender = new CountingSender();
+        using var clicker = new ClickerEngine(sender);
+        var finished = CompletionSource(clicker);
+        var notifications = 0;
+        clicker.Finished += _ => Interlocked.Increment(ref notifications);
+        clicker.Start(new(InputKind.Mouse, MouseButton.Right), 10, ClickerMode.OnceAfterDelay, .2);
+        clicker.Start(new(InputKind.Keyboard, MouseButton.Left, 66), 10, ClickerMode.OnceAfterDelay, .1);
+        var result = await finished.Task.WaitAsync(TimeSpan.FromSeconds(3));
+        Check(result.RunId == clicker.RunId && result.InputSent);
+        await Task.Delay(150);
+        Check(sender.Count == 1 && sender.Targets.Single().VirtualKey == 66);
+        clicker.Start(new(), 10, ClickerMode.OnceAfterDelay, .1);
+        clicker.Stop();
+        await Task.Delay(180);
+        Check(sender.Count == 1 && notifications == 1 && !clicker.IsRunning && clicker.RemainingDelay == null);
+    }),
+    ("Disposing a waiting clicker cancels its input", async () =>
+    {
+        var sender = new CountingSender();
+        var clicker = new ClickerEngine(sender);
+        clicker.Start(new(), 10, ClickerMode.OnceAfterDelay, .1);
+        clicker.Dispose();
+        await Task.Delay(180);
+        Check(sender.Count == 0 && !clicker.IsRunning);
+    }),
+    ("Skipped delayed input is reported and never retried", async () =>
+    {
+        var sender = new SkippingSender();
+        using var clicker = new ClickerEngine(sender);
+        var finished = CompletionSource(clicker);
+        clicker.Start(new(), 10, ClickerMode.OnceAfterDelay, .1);
+        var result = await finished.Task.WaitAsync(TimeSpan.FromSeconds(3));
+        Check(!result.InputSent && result.Error == null && !clicker.IsRunning);
+        await Task.Delay(180);
+        Check(sender.Count == 1);
+    }),
+    ("Input failure stops both modes and reports the error", async () =>
+    {
+        foreach (var mode in Enum.GetValues<ClickerMode>())
+        {
+            using var clicker = new ClickerEngine(new FailingSender());
+            var finished = CompletionSource(clicker);
+            clicker.Start(new(), 50, mode, .1);
+            var result = await finished.Task.WaitAsync(TimeSpan.FromSeconds(3));
+            Check(result.Error is IOException && !clicker.IsRunning);
+        }
     })
 };
 
@@ -146,6 +234,12 @@ return failures == 0 ? 0 : 1;
 
 static Func<Task> Sync(Action action) => () => { action(); return Task.CompletedTask; };
 static void Check(bool condition) { if (!condition) throw new InvalidOperationException("Assertion failed."); }
+static TaskCompletionSource<ClickerCompletion> CompletionSource(ClickerEngine clicker)
+{
+    var source = new TaskCompletionSource<ClickerCompletion>(TaskCreationOptions.RunContinuationsAsynchronously);
+    clicker.Finished += result => source.TrySetResult(result);
+    return source;
+}
 static void WithStore(Action<SettingsStore, string> test)
 {
     var root = Path.Combine(Path.GetTempPath(), "dabudi-test-" + Guid.NewGuid().ToString("N"));
@@ -165,8 +259,17 @@ sealed class ManualClock : TimeProvider
 sealed class CountingSender : IInputSender
 {
     private int _count;
+    private long _lastTimestamp;
     public int Count => Volatile.Read(ref _count);
-    public void Send(InputTarget target) => Interlocked.Increment(ref _count);
+    public long LastTimestamp => Volatile.Read(ref _lastTimestamp);
+    public ConcurrentQueue<InputTarget> Targets { get; } = new();
+    public bool Send(InputTarget target)
+    {
+        Interlocked.Exchange(ref _lastTimestamp, Stopwatch.GetTimestamp());
+        Targets.Enqueue(target);
+        Interlocked.Increment(ref _count);
+        return true;
+    }
 }
 sealed class BlockingSender : IInputSender, IDisposable
 {
@@ -174,15 +277,21 @@ sealed class BlockingSender : IInputSender, IDisposable
     public int Count => Volatile.Read(ref _count);
     public TaskCompletionSource Entered { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
     public ManualResetEventSlim Release { get; } = new();
-    public void Send(InputTarget target)
+    public bool Send(InputTarget target)
     {
         Interlocked.Increment(ref _count);
         Entered.TrySetResult();
         if (!Release.Wait(TimeSpan.FromSeconds(5))) throw new TimeoutException("Blocking test sender was not released.");
+        return true;
     }
     public void Dispose() { Release.Set(); Release.Dispose(); }
 }
 sealed class FailingSender : IInputSender
 {
-    public void Send(InputTarget target) => throw new IOException("Simulated input failure.");
+    public bool Send(InputTarget target) => throw new IOException("Simulated input failure.");
+}
+sealed class SkippingSender : IInputSender
+{
+    public int Count { get; private set; }
+    public bool Send(InputTarget target) { Count++; return false; }
 }

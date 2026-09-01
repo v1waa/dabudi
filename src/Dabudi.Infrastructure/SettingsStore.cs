@@ -28,7 +28,7 @@ public sealed class SettingsStore(string directory, AppLog log, string? legacyDi
                 if (settings.SchemaVersion > AppSettings.CurrentSchema)
                     return new(new AppSettings(), "Настройки созданы более новой версией dabudi. Файл сохранён; запись отключена.", false);
                 var normalized = AppSettings.Normalize(settings);
-                return new(normalized, settings.Validate().Count > 0
+                return new(normalized, (settings with { SchemaVersion = AppSettings.CurrentSchema }).Validate().Count > 0
                     ? "Некорректные настройки исправлены. Проверьте клавиши и сохраните изменения." : null);
             }
             catch (Exception exception) when (exception is JsonException or IOException or UnauthorizedAccessException)

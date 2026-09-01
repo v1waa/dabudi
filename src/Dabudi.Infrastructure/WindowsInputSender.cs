@@ -8,16 +8,16 @@ namespace Dabudi.Infrastructure;
 [SupportedOSPlatform("windows")]
 public sealed class WindowsInputSender : IInputSender
 {
-    public void Send(InputTarget target)
+    public bool Send(InputTarget target)
     {
         var foreground = NativeMethods.GetForegroundWindow();
-        if (foreground == 0) return;
+        if (foreground == 0) return false;
         NativeMethods.GetWindowThreadProcessId(foreground, out var processId);
         // Do not click the Start/Stop button again or type into our own settings.
-        if (processId == Environment.ProcessId) return;
+        if (processId == Environment.ProcessId) return false;
         var inputs = new[] { CreateInput(target, false), CreateInput(target, true) };
         var count = NativeMethods.SendInput(2, inputs, Marshal.SizeOf<NativeMethods.Input>());
-        if (count == 2) return;
+        if (count == 2) return true;
         var error = Marshal.GetLastWin32Error();
         if (count == 1)
             NativeMethods.SendInput(1, [inputs[1]], Marshal.SizeOf<NativeMethods.Input>());

@@ -183,7 +183,7 @@
       "dabudi.infrastructure": {
         "type": "Project",
         "dependencies": {
-          "Dabudi.Core": "[3.0.0, )",
+          "Dabudi.Core": "[3.1.0, )",
           "LibreHardwareMonitorLib": "[0.9.6, )"
         }
       }

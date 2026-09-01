@@ -1,148 +1,560 @@
-<Window x:Class="Dabudi.Presentation.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="dabudi" Width="980" Height="750" MinWidth="820" MinHeight="540"
-        WindowStartupLocation="CenterScreen" Icon="/Assets/app.ico">
-  <Grid Margin="24,18,24,16">
+<?xml version="1.0" encoding="utf-8"?>
+<Window x:Class="Dabudi.Presentation.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework" Title="dabudi — настройки" Icon="/Assets/app.ico" Width="790" Height="790" MinWidth="700" MinHeight="650" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="CanResize" Background="{DynamicResource AppBackgroundBrush}">
+  <shell:WindowChrome.WindowChrome>
+    <shell:WindowChrome CaptionHeight="38" ResizeBorderThickness="6" CornerRadius="0" GlassFrameThickness="0" UseAeroCaptionButtons="False" />
+  </shell:WindowChrome.WindowChrome>
+  <Grid Name="rootGrid" Background="{DynamicResource AppBackgroundBrush}">
     <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
+      <RowDefinition Height="38" />
       <RowDefinition Height="*" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
-    <Grid Margin="0,0,0,20">
-      <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-      <StackPanel><TextBlock Text="dabudi" FontSize="27" FontWeight="SemiBold" /><TextBlock Text="3.0.0 · инструменты для Windows" Style="{StaticResource Hint}" Margin="0,3,0,0" /></StackPanel>
-      <Button Grid.Column="1" Content="Остановить всё" Command="{Binding StopAll}" Margin="0,0,10,0" VerticalAlignment="Center" />
-      <Button Grid.Column="2" Content="В трей" Click="HideToTray_Click" VerticalAlignment="Center" />
-    </Grid>
-    <TabControl x:Name="NavigationTabs" Grid.Row="1" SelectionChanged="Tabs_SelectionChanged">
-      <TabItem Header="Инструменты">
-        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-          <Grid>
-            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-            <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-            <Border Style="{StaticResource Card}">
-              <StackPanel>
-                <TextBlock Text="Секундомер" FontSize="18" FontWeight="SemiBold" />
-                <TextBlock Text="{Binding StopwatchStatus}" Style="{StaticResource Hint}" />
-                <TextBlock Text="{Binding ElapsedDisplay}" FontFamily="Consolas" FontSize="32" Foreground="{DynamicResource AccentBrush}" Margin="0,7,0,20" />
-                <WrapPanel><Button Content="{Binding StopwatchButton}" Command="{Binding ToggleStopwatch}" Margin="0,0,8,0" /><Button Content="Сбросить" Command="{Binding ResetStopwatch}" /></WrapPanel>
+    <Border Grid.Row="0" Background="{DynamicResource PanelBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" MouseLeftButtonDown="Header_MouseLeftButtonDown">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Margin="12,0,0,0" Orientation="Horizontal" VerticalAlignment="Center">
+          <Image Width="19" Height="19" Source="/Assets/brand.png" Stretch="Uniform" />
+          <TextBlock Margin="8,0,0,0" Text="dabudi" FontWeight="SemiBold" VerticalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" shell:WindowChrome.IsHitTestVisibleInChrome="True">
+          <Button Content="" Style="{StaticResource TitleBarButtonStyle}" Click="WindowMinimize_Click" ToolTip="Свернуть" AutomationProperties.Name="Свернуть" />
+          <Button Content="" Style="{StaticResource TitleBarButtonStyle}" Click="WindowMaximize_Click" ToolTip="Развернуть / восстановить" AutomationProperties.Name="Развернуть или восстановить" />
+          <Button Content="" Style="{StaticResource TitleBarCloseButtonStyle}" Click="WindowClose_Click" ToolTip="Закрыть dabudi" AutomationProperties.Name="Закрыть приложение" />
+        </StackPanel>
+      </Grid>
+    </Border>
+    <Border Name="rootBorder" Grid.Row="1" Margin="0" Background="{DynamicResource PanelBackgroundBrush}" BorderThickness="0" CornerRadius="0">
+      <Grid>
+        <Grid Grid.Row="0">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="62" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <Border Grid.Column="0" Background="{DynamicResource SurfaceAltBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,0,1,0">
+            <Grid Margin="9,13">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+              </Grid.RowDefinitions>
+              <RadioButton Name="navGeneral" Grid.Row="0" Content="" ToolTip="Общие" IsChecked="True" Style="{StaticResource NavRailButtonStyle}" Checked="Navigation_Checked" Tag="0" />
+              <RadioButton Name="navDbd" Grid.Row="1" Margin="0,7,0,0" Content="" ToolTip="Dead by Daylight" Style="{StaticResource NavRailButtonStyle}" Checked="Navigation_Checked" Tag="1" />
+              <RadioButton Name="navInterface" Grid.Row="2" Margin="0,7,0,0" Content="" ToolTip="Интерфейс" Style="{StaticResource NavRailButtonStyle}" Checked="Navigation_Checked" Tag="2" />
+              <StackPanel Grid.Row="4">
+                <Button Content="" ToolTip="Скрыть окно в трей" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="16" MinWidth="42" Width="42" Height="42" Padding="0" Click="HideToTray_Click" />
+                <Button Margin="0,7,0,0" Content="" ToolTip="Выйти из приложения" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="16" MinWidth="42" Width="42" Height="42" Padding="0" Style="{StaticResource DangerButtonStyle}" Command="{Binding Exit}" />
               </StackPanel>
-            </Border>
-            <Border Grid.Column="1" Style="{StaticResource Card}" Margin="0,0,0,12">
-              <StackPanel>
-                <TextBlock Text="Автокликер" FontSize="18" FontWeight="SemiBold" />
-                <TextBlock Text="{Binding ClickerStatus}" Style="{StaticResource Hint}" />
-                <Button Content="{Binding ClickTarget}" Click="CaptureInput_Click" HorizontalAlignment="Left" Margin="0,2,0,10" />
-                <WrapPanel VerticalAlignment="Center">
-                  <TextBox Text="{Binding ClicksPerSecond, UpdateSourceTrigger=PropertyChanged}" Width="65" Margin="0,0,8,0" />
-                  <TextBlock Text="нажатий/с" VerticalAlignment="Center" Margin="0,0,14,0" />
-                  <Button Content="{Binding ClickerButton}" Command="{Binding ToggleClicker}" />
-                </WrapPanel>
-              </StackPanel>
-            </Border>
-            <Border Grid.Row="1" Style="{StaticResource Card}">
-              <StackPanel>
-                <TextBlock Text="Прицел" FontSize="18" FontWeight="SemiBold" />
-                <TextBlock Text="В центре выбранного экрана. Размер и цвет — в настройках." Style="{StaticResource Hint}" />
-                <Button Content="{Binding CrosshairButton}" Command="{Binding ToggleCrosshair}" HorizontalAlignment="Left" Margin="0,8,0,0" />
-              </StackPanel>
-            </Border>
-            <Border Grid.Column="1" Grid.Row="1" Style="{StaticResource Card}" Margin="0,0,0,12">
-              <StackPanel>
-                <TextBlock Text="Мониторинг системы" FontSize="18" FontWeight="SemiBold" />
-                <TextBlock Text="CPU, GPU и оперативная память. Недоступные датчики отображаются как «—»." Style="{StaticResource Hint}" />
-                <WrapPanel Margin="0,8,0,0"><Button Content="{Binding PerformanceButton}" Command="{Binding TogglePerformance}" /><TextBlock Text="{Binding PerformanceStatus}" VerticalAlignment="Center" Margin="14,0,0,0" Foreground="{DynamicResource MutedBrush}" /></WrapPanel>
-              </StackPanel>
-            </Border>
-            <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Style="{StaticResource Hint}" Text="Закрытие окна сворачивает dabudi в трей. Автокликер не отправляет нажатия в окно dabudi; для работы переключитесь в нужное приложение. Все команды доступны во вкладке «Горячие клавиши»." />
-          </Grid>
-        </ScrollViewer>
-      </TabItem>
-      <TabItem Header="Dead by Daylight">
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-          <StackPanel>
-            <Border Style="{StaticResource Card}" Margin="0,0,0,12">
-              <StackPanel>
-                <TextBlock Text="Таймеры эффектов" FontSize="22" FontWeight="SemiBold" />
-                <TextBlock Text="Запускаются одновременно вручную. Повторный запуск начинает отсчёт заново." Style="{StaticResource Hint}" />
-                <Grid Margin="0,18,0,18">
-                  <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                  <StackPanel><TextBlock Text="Decisive Strike" Margin="0,0,0,8" /><WrapPanel><TextBox Text="{Binding DsSeconds, UpdateSourceTrigger=PropertyChanged}" Width="100" /><TextBlock Text="секунд" VerticalAlignment="Center" Margin="12,0,0,0" /></WrapPanel></StackPanel>
-                  <StackPanel Grid.Column="1"><TextBlock Text="Endurance" Margin="0,0,0,8" /><WrapPanel><TextBox Text="{Binding EndSeconds, UpdateSourceTrigger=PropertyChanged}" Width="100" /><TextBlock Text="секунд" VerticalAlignment="Center" Margin="12,0,0,0" /></WrapPanel></StackPanel>
-                </Grid>
-                <TextBlock Text="0 отключает соответствующий таймер. Допустимый диапазон: 0–3600 секунд." Style="{StaticResource Hint}" />
-                <WrapPanel Margin="0,10,0,8"><Button Content="Запустить / перезапустить" Style="{StaticResource PrimaryButton}" Command="{Binding StartEffects}" Margin="0,0,10,0" /><Button Content="Закрыть таймеры" Command="{Binding CloseEffects}" /></WrapPanel>
-                <TextBlock Text="{Binding EffectsStatus}" Style="{StaticResource Hint}" />
-              </StackPanel>
-            </Border>
-            <TextBlock Text="dabudi не считывает состояние игры. Укажите нужную длительность и запускайте отсчёт кнопкой или горячей клавишей. Для показа оверлеев используйте оконный режим или режим без рамки." Style="{StaticResource Hint}" />
-          </StackPanel>
-        </ScrollViewer>
-      </TabItem>
-      <TabItem Header="Горячие клавиши">
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-          <StackPanel>
-            <TextBlock Text="Нажмите на сочетание и введите новое. Esc отменяет запись. Изменения клавиш сохраняются сразу." Style="{StaticResource Hint}" />
-            <ItemsControl ItemsSource="{Binding Hotkeys}">
-              <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                  <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="0,9">
+            </Grid>
+          </Border>
+          <TabControl Name="NavigationTabs" SelectionChanged="Tabs_SelectionChanged" Grid.Column="1" SelectedIndex="0" Style="{StaticResource ContentOnlyTabControlStyle}">
+            <TabItem Header="Общие">
+              <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="24,0,22,26">
+                  <Grid Style="{StaticResource InspectorSectionHeaderStyle}">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="25" />
+                      <ColumnDefinition Width="Auto" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                    <TextBlock Grid.Column="1" Text="ИНСТРУМЕНТЫ" Style="{StaticResource InspectorSectionTitleStyle}" />
+                    <Border Grid.Column="2" Margin="11,0,0,0" Height="1" VerticalAlignment="Center" Background="{DynamicResource DividerBrush}" />
+                  </Grid>
+                  <Border Style="{StaticResource InspectorRowStyle}">
                     <Grid>
-                      <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="170" /><ColumnDefinition Width="86" /><ColumnDefinition Width="78" /></Grid.ColumnDefinitions>
-                      <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="0,0,12,0" />
-                      <Button Grid.Column="1" Content="{Binding Binding}" Click="CaptureHotkey_Click" Margin="0,0,8,0" Padding="7" />
-                      <Button Grid.Column="2" Content="Стандарт" Command="{Binding Reset}" Margin="0,0,8,0" Padding="5" FontSize="12" />
-                      <Button Grid.Column="3" Content="Убрать" Command="{Binding Clear}" Padding="5" FontSize="12" />
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Прицел" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="Показывается поверх окон" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <Grid Grid.Column="2" Width="320" HorizontalAlignment="Right">
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="42" />
+                          <ColumnDefinition Width="8" />
+                          <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <CheckBox Name="chkCrosshair" HorizontalAlignment="Center" VerticalAlignment="Center" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding IsCrosshairVisible, Mode=OneWay}" Command="{Binding ToggleCrosshair}" />
+                        <Button Name="btnRecordCrosshairKey" Grid.Column="2" Width="Auto" HorizontalAlignment="Stretch" DataContext="{Binding CrosshairHotkey}" Content="{Binding Binding}" Style="{StaticResource CaptureHotkeyButtonStyle}" Click="CaptureHotkey_Click" />
+                      </Grid>
                     </Grid>
                   </Border>
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
-            <TextBlock Text="Клавиша закрытия таймеров DBD действует, только пока эти таймеры открыты. Одна комбинация назначается одному действию. F12 зарезервирована Windows." Style="{StaticResource Hint}" Margin="0,16,0,8" />
-          </StackPanel>
-        </ScrollViewer>
-      </TabItem>
-      <TabItem Header="Настройки">
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-          <StackPanel>
-            <Border Style="{StaticResource Card}" Margin="0,0,0,12">
-              <StackPanel>
-                <TextBlock Text="Оверлеи" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12" />
-                <TextBlock Text="Экран" Margin="0,0,0,7" />
-                <ComboBox ItemsSource="{Binding Displays}" DisplayMemberPath="Label" SelectedValuePath="Device" SelectedValue="{Binding SelectedMonitor}" MinHeight="34" MaxWidth="460" HorizontalAlignment="Left" MinWidth="300" />
-                <CheckBox Content="Разрешить перемещение оверлеев мышью" IsChecked="{Binding AllowDragging}" />
-                <TextBlock Text="При отключённом перемещении нажатия проходят сквозь оверлеи. Прицел всегда остаётся в центре экрана." Style="{StaticResource Hint}" />
-                <WrapPanel Margin="0,8,0,0">
-                  <StackPanel Margin="0,0,24,0"><TextBlock Text="Размер прицела (8–80)" Margin="0,0,0,7" /><TextBox Text="{Binding CrosshairSize, UpdateSourceTrigger=PropertyChanged}" Width="140" HorizontalAlignment="Left" /></StackPanel>
-                  <StackPanel><TextBlock Text="Цвет прицела" Margin="0,0,0,7" /><TextBox Text="{Binding CrosshairColor, UpdateSourceTrigger=PropertyChanged}" Width="140" /></StackPanel>
-                </WrapPanel>
-              </StackPanel>
-            </Border>
-            <Border Style="{StaticResource Card}" Margin="0,0,0,12">
-              <StackPanel>
-                <TextBlock Text="Оформление" FontSize="18" FontWeight="SemiBold" />
-                <TextBlock Text="Цвета в формате #RRGGBB. Изменения применяются кнопкой «Сохранить настройки»." Style="{StaticResource Hint}" />
-                <WrapPanel>
-                  <StackPanel Margin="0,0,18,12"><TextBlock Text="Фон" Margin="0,0,0,7" /><TextBox Text="{Binding BackgroundColor, UpdateSourceTrigger=PropertyChanged}" Width="135" /></StackPanel>
-                  <StackPanel Margin="0,0,18,12"><TextBlock Text="Панели" Margin="0,0,0,7" /><TextBox Text="{Binding PanelColor, UpdateSourceTrigger=PropertyChanged}" Width="135" /></StackPanel>
-                  <StackPanel Margin="0,0,18,12"><TextBlock Text="Акцент" Margin="0,0,0,7" /><TextBox Text="{Binding AccentColor, UpdateSourceTrigger=PropertyChanged}" Width="135" /></StackPanel>
-                  <StackPanel Margin="0,0,18,12"><TextBlock Text="Текст" Margin="0,0,0,7" /><TextBox Text="{Binding TextColor, UpdateSourceTrigger=PropertyChanged}" Width="135" /></StackPanel>
-                </WrapPanel>
-                <Button Content="Стандартные цвета" Command="{Binding ResetTheme}" HorizontalAlignment="Left" />
-              </StackPanel>
-            </Border>
-            <CheckBox Content="Запускать dabudi вместе с Windows (в трее)" IsChecked="{Binding RunAtStartup}" />
-            <WrapPanel Margin="0,12,0,16"><Button Content="Папка настроек" Command="{Binding OpenSettings}" Margin="0,0,10,0" /><Button Content="Журнал ошибок" Command="{Binding OpenLogs}" Margin="0,0,10,0" /><Button Content="Выход из dabudi" Command="{Binding Exit}" /></WrapPanel>
-          </StackPanel>
-        </ScrollViewer>
-      </TabItem>
-    </TabControl>
-    <Border Grid.Row="2" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,14,0,0" Margin="0,14,0,0">
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Секундомер" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="{Binding StopwatchStatus}" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <Grid Grid.Column="2" Width="320" HorizontalAlignment="Right">
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="8" />
+                          <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button HorizontalAlignment="Stretch" Width="Auto" Content="{Binding StopwatchButton}" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding ToggleStopwatch}" />
+                        <Button Name="btnRecordTimerKey" Grid.Column="2" Width="Auto" HorizontalAlignment="Stretch" DataContext="{Binding StopwatchHotkey}" Content="{Binding Binding}" Style="{StaticResource CaptureHotkeyButtonStyle}" Click="CaptureHotkey_Click" />
+                      </Grid>
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="30" /><ColumnDefinition Width="185" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                      <TextBlock Text="&#xE777;" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Сброс секундомера" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="{Binding ElapsedDisplay}" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <Grid Grid.Column="2" Width="320" HorizontalAlignment="Right">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="8" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <Button Width="Auto" HorizontalAlignment="Stretch" Content="Сбросить" Command="{Binding ResetStopwatch}" />
+                        <Button Grid.Column="2" Width="Auto" HorizontalAlignment="Stretch" DataContext="{Binding ResetStopwatchHotkey}" Content="{Binding Binding}" Style="{StaticResource CaptureHotkeyButtonStyle}" Click="CaptureHotkey_Click" />
+                      </Grid>
+                    </Grid>
+                  </Border>
+                  <Grid Style="{StaticResource InspectorSectionHeaderStyle}">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="25" />
+                      <ColumnDefinition Width="Auto" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                    <TextBlock Grid.Column="1" Text="АВТОКЛИКЕР" Style="{StaticResource InspectorSectionTitleStyle}" />
+                    <Border Grid.Column="2" Margin="11,0,0,0" Height="1" VerticalAlignment="Center" Background="{DynamicResource DividerBrush}" />
+                  </Grid>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Нажимаемая клавиша" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="Клавиатура или кнопка мыши" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <Button Name="btnRecordClickerInput" Grid.Column="2" Content="{Binding ClickTarget}" Style="{StaticResource HotkeyButtonStyle}" Click="CaptureInput_Click" />
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="30" /><ColumnDefinition Width="185" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                      <TextBlock Text="&#xE8A5;" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Режим" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="Повторение или таймер" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <ComboBox Grid.Column="2" ItemsSource="{Binding ClickModes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding SelectedClickMode}" AutomationProperties.Name="Режим автокликера" />
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding ClickerTimingLabel}" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="{Binding ClickerTimingHint}" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <Grid Grid.Column="2">
+                        <TextBox Name="txtClickerCps" Text="{Binding ClicksPerSecond, UpdateSourceTrigger=PropertyChanged}" MaxLength="2" HorizontalContentAlignment="Center">
+                          <TextBox.Style>
+                            <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                              <Style.Triggers><DataTrigger Binding="{Binding IsDelayedClick}" Value="True"><Setter Property="Visibility" Value="Collapsed" /></DataTrigger></Style.Triggers>
+                            </Style>
+                          </TextBox.Style>
+                        </TextBox>
+                        <TextBox Name="ClickDelayInput" Text="{Binding ClickDelaySeconds, UpdateSourceTrigger=PropertyChanged}" MaxLength="10" HorizontalContentAlignment="Center"
+                                 Visibility="{Binding IsDelayedClick, Converter={StaticResource BoolVisibility}}" AutomationProperties.Name="Задержка нажатия в секундах" />
+                      </Grid>
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Ellipse Width="7" Height="7" Margin="0,0,7,0" Fill="{DynamicResource MutedTextBrush}" />
+                        <TextBlock Name="txtClickerState" Text="{Binding ClickerStatus}" VerticalAlignment="Center" />
+                      </StackPanel>
+                      <Grid Grid.Column="2" Width="320" HorizontalAlignment="Right">
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="8" />
+                          <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Name="btnClickerToggle" Width="Auto" HorizontalAlignment="Stretch" Content="{Binding ClickerButton}" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding ToggleClicker}" />
+                        <Button Name="btnRecordClickerKey" Grid.Column="2" Width="Auto" HorizontalAlignment="Stretch" DataContext="{Binding ClickerHotkey}" Content="{Binding Binding}" Style="{StaticResource CaptureHotkeyButtonStyle}" Click="CaptureHotkey_Click" />
+                      </Grid>
+                    </Grid>
+                  </Border>
+                  <Grid Style="{StaticResource InspectorSectionHeaderStyle}">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="25" />
+                      <ColumnDefinition Width="Auto" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                    <TextBlock Grid.Column="1" Text="СИСТЕМА" Style="{StaticResource InspectorSectionTitleStyle}" />
+                    <Border Grid.Column="2" Margin="11,0,0,0" Height="1" VerticalAlignment="Center" Background="{DynamicResource DividerBrush}" />
+                  </Grid>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Монитор производительности" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Name="txtPerformanceState" Text="{Binding PerformanceStatus}" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <Grid Grid.Column="2" Width="320" HorizontalAlignment="Right">
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="8" />
+                          <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Name="btnPerformanceToggle" Width="Auto" HorizontalAlignment="Stretch" Content="{Binding PerformanceButton}" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding TogglePerformance}" />
+                        <Button Name="btnRecordPerformanceKey" Grid.Column="2" Width="Auto" HorizontalAlignment="Stretch" DataContext="{Binding PerformanceHotkey}" Content="{Binding Binding}" Style="{StaticResource CaptureHotkeyButtonStyle}" Click="CaptureHotkey_Click" />
+                      </Grid>
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Автозапуск" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="Запускать dabudi вместе с Windows" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <CheckBox Name="chkRunAtStartup" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource ToggleSwitchStyle}" IsChecked="{Binding RunAtStartup}" />
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="30" /><ColumnDefinition Width="185" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                      <TextBlock Text="&#xE71A;" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Остановить всё" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="Закрыть оверлеи и отменить ввод" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <Grid Grid.Column="2" Width="320" HorizontalAlignment="Right">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="8" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                        <Button Width="Auto" HorizontalAlignment="Stretch" Content="Остановить" Command="{Binding StopAll}" />
+                        <Button Grid.Column="2" Width="Auto" HorizontalAlignment="Stretch" DataContext="{Binding StopAllHotkey}" Content="{Binding Binding}" Style="{StaticResource CaptureHotkeyButtonStyle}" Click="CaptureHotkey_Click" />
+                      </Grid>
+                    </Grid>
+                  </Border>
+                </StackPanel>
+              </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Dead by Daylight">
+              <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="24,0,22,26">
+                  <Grid Style="{StaticResource InspectorSectionHeaderStyle}">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="25" />
+                      <ColumnDefinition Width="Auto" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                    <TextBlock Grid.Column="1" Text="ДЛИТЕЛЬНОСТЬ" Style="{StaticResource InspectorSectionTitleStyle}" />
+                    <Border Grid.Column="2" Margin="11,0,0,0" Height="1" VerticalAlignment="Center" Background="{DynamicResource DividerBrush}" />
+                  </Grid>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="DS" FontSize="9" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Decisive Strike" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="Секунды; 0 — отключить" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <TextBox Name="txtDsDuration" Grid.Column="2" Text="{Binding DsSeconds, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="EN" FontSize="9" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" VerticalAlignment="Center" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Endurance" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="Секунды; 0 — отключить" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <TextBox Name="txtEndDuration" Grid.Column="2" Text="{Binding EndSeconds, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+                  </Border>
+                  <Grid Style="{StaticResource InspectorSectionHeaderStyle}">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="25" />
+                      <ColumnDefinition Width="Auto" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                    <TextBlock Grid.Column="1" Text="ГОРЯЧИЕ КЛАВИШИ" Style="{StaticResource InspectorSectionTitleStyle}" />
+                    <Border Grid.Column="2" Margin="11,0,0,0" Height="1" VerticalAlignment="Center" Background="{DynamicResource DividerBrush}" />
+                  </Grid>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                      <TextBlock Grid.Column="1" Text="Запуск DS / EN" Style="{StaticResource InspectorLabelStyle}" />
+                      <Grid Grid.Column="2" Width="320" HorizontalAlignment="Right">
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="8" />
+                          <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Width="Auto" HorizontalAlignment="Stretch" Content="Запустить" Style="{StaticResource PrimaryButtonStyle}" Command="{Binding StartEffects}" />
+                        <Button Name="btnRecordKey" Grid.Column="2" Width="Auto" HorizontalAlignment="Stretch" DataContext="{Binding StartEffectsHotkey}" Content="{Binding Binding}" Style="{StaticResource CaptureHotkeyButtonStyle}" Click="CaptureHotkey_Click" />
+                      </Grid>
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                      <TextBlock Grid.Column="1" Text="Закрытие DS / EN" Style="{StaticResource InspectorLabelStyle}" />
+                      <Grid Grid.Column="2" Width="320" HorizontalAlignment="Right">
+                        <Grid.ColumnDefinitions>
+                          <ColumnDefinition Width="*" />
+                          <ColumnDefinition Width="8" />
+                          <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Width="Auto" HorizontalAlignment="Stretch" Content="Закрыть" Command="{Binding CloseEffects}" />
+                        <Button Name="btnRecordCloseKey" Grid.Column="2" Width="Auto" HorizontalAlignment="Stretch" DataContext="{Binding CloseEffectsHotkey}" Content="{Binding Binding}" Style="{StaticResource CaptureHotkeyButtonStyle}" Click="CaptureHotkey_Click" />
+                      </Grid>
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                      <TextBlock Grid.Column="1" Text="Выход" Style="{StaticResource InspectorLabelStyle}" />
+                      <Button Name="btnRecordExitKey" Grid.Column="2" DataContext="{Binding ExitHotkey}" Content="{Binding Binding}" Style="{StaticResource CaptureHotkeyButtonStyle}" Click="CaptureHotkey_Click" />
+                    </Grid>
+                  </Border>
+                </StackPanel>
+              </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Интерфейс">
+              <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="24,0,22,26">
+                  <Grid Style="{StaticResource InspectorSectionHeaderStyle}">
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="25" />
+                      <ColumnDefinition Width="Auto" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                    <TextBlock Grid.Column="1" Text="ОФОРМЛЕНИЕ" Style="{StaticResource InspectorSectionTitleStyle}" />
+                    <Border Grid.Column="2" Margin="11,0,0,0" Height="1" VerticalAlignment="Center" Background="{DynamicResource DividerBrush}" />
+                  </Grid>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Встроенная тема" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="Тёмная палитра по умолчанию" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Ellipse Width="11" Height="11" Margin="0,0,8,0" Fill="{DynamicResource AccentBrush}" />
+                        <TextBlock Text="Шалфейный графит" Style="{StaticResource InspectorValueStyle}" />
+                      </StackPanel>
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="31" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Фон окна" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="Ручная настройка HEX" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <TextBox Name="txtGridColor" Grid.Column="2" Text="{Binding BackgroundColor, UpdateSourceTrigger=PropertyChanged}" />
+                      <Rectangle Name="rectGridPreview" Grid.Column="3" Width="19" Height="19" Margin="9,0,0,0" RadiusX="4" RadiusY="4" Fill="{DynamicResource AppBackgroundBrush}" Stroke="{DynamicResource BorderBrush}" StrokeThickness="1" />
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="31" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                      <TextBlock Grid.Column="1" Text="Панель" Style="{StaticResource InspectorLabelStyle}" />
+                      <TextBox Name="txtBorderColor" Grid.Column="2" Text="{Binding PanelColor, UpdateSourceTrigger=PropertyChanged}" />
+                      <Rectangle Name="rectBorderPreview" Grid.Column="3" Width="19" Height="19" Margin="9,0,0,0" RadiusX="4" RadiusY="4" Fill="{DynamicResource PanelBackgroundBrush}" Stroke="{DynamicResource BorderBrush}" StrokeThickness="1" />
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="31" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                      <TextBlock Grid.Column="1" Text="Акцент" Style="{StaticResource InspectorLabelStyle}" />
+                      <TextBox Name="txtAccentColor" Grid.Column="2" Text="{Binding AccentColor, UpdateSourceTrigger=PropertyChanged}" />
+                      <Rectangle Name="rectAccentPreview" Grid.Column="3" Width="19" Height="19" Margin="9,0,0,0" RadiusX="4" RadiusY="4" Fill="{DynamicResource AccentBrush}" Stroke="{DynamicResource BorderBrush}" StrokeThickness="1" />
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="185" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="31" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Text="" Style="{StaticResource InspectorIconStyle}" />
+                      <TextBlock Grid.Column="1" Text="Основной текст" Style="{StaticResource InspectorLabelStyle}" />
+                      <TextBox Name="txtTextColor" Grid.Column="2" Text="{Binding TextColor, UpdateSourceTrigger=PropertyChanged}" />
+                      <Rectangle Name="rectTextPreview" Grid.Column="3" Width="19" Height="19" Margin="9,0,0,0" RadiusX="4" RadiusY="4" Fill="{DynamicResource TextBrush}" Stroke="{DynamicResource BorderBrush}" StrokeThickness="1" />
+                    </Grid>
+                  </Border>
+                  <Button Margin="0,12,0,0" Width="320" Content="Вернуть тему «Шалфейный графит»" HorizontalAlignment="Right" Command="{Binding ResetTheme}" />
+                  <Grid Style="{StaticResource InspectorSectionHeaderStyle}">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="25" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                    <TextBlock Text="&#xE7F4;" Style="{StaticResource InspectorIconStyle}" />
+                    <TextBlock Grid.Column="1" Text="ОВЕРЛЕИ" Style="{StaticResource InspectorSectionTitleStyle}" />
+                    <Border Grid.Column="2" Margin="11,0,0,0" Height="1" VerticalAlignment="Center" Background="{DynamicResource DividerBrush}" />
+                  </Grid>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="30" /><ColumnDefinition Width="185" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                      <TextBlock Text="&#xE7F4;" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Экран" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="Размещение оверлеев" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <ComboBox Grid.Column="2" ItemsSource="{Binding Displays}" DisplayMemberPath="Label" SelectedValuePath="Device" SelectedValue="{Binding SelectedMonitor}" AutomationProperties.Name="Экран для оверлеев" />
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="30" /><ColumnDefinition Width="185" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                      <TextBlock Text="&#xE759;" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Перемещение" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="Перетаскивать панели мышью" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <CheckBox Grid.Column="2" IsChecked="{Binding AllowDragging}" HorizontalAlignment="Right" Style="{StaticResource ToggleSwitchStyle}" AutomationProperties.Name="Перетаскивать панели мышью" />
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="30" /><ColumnDefinition Width="185" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                      <TextBlock Text="&#xE7B3;" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Размер прицела" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="От 8 до 80; стандартный — 15" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <TextBox Grid.Column="2" Text="{Binding CrosshairSize, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Center" MaxLength="2" />
+                    </Grid>
+                  </Border>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="30" /><ColumnDefinition Width="185" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                      <TextBlock Text="&#xE790;" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Цвет прицела" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="HEX; стандартный — #FFFFFF" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <TextBox Grid.Column="2" Text="{Binding CrosshairColor, UpdateSourceTrigger=PropertyChanged}" MaxLength="7" />
+                    </Grid>
+                  </Border>
+                  <Grid Style="{StaticResource InspectorSectionHeaderStyle}">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="25" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                    <TextBlock Text="&#xE8B7;" Style="{StaticResource InspectorIconStyle}" />
+                    <TextBlock Grid.Column="1" Text="ДАННЫЕ" Style="{StaticResource InspectorSectionTitleStyle}" />
+                    <Border Grid.Column="2" Margin="11,0,0,0" Height="1" VerticalAlignment="Center" Background="{DynamicResource DividerBrush}" />
+                  </Grid>
+                  <Border Style="{StaticResource InspectorRowStyle}">
+                    <Grid>
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="30" /><ColumnDefinition Width="185" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                      <TextBlock Text="&#xE8B7;" Style="{StaticResource InspectorIconStyle}" />
+                      <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Настройки и журнал" Style="{StaticResource InspectorLabelStyle}" />
+                        <TextBlock Text="Открыть папку" Style="{StaticResource MutedTextStyle}" />
+                      </StackPanel>
+                      <Grid Grid.Column="2" Width="320" HorizontalAlignment="Right"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="8" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Button Width="Auto" HorizontalAlignment="Stretch" Content="Настройки" Command="{Binding OpenSettings}" /><Button Grid.Column="2" Width="Auto" HorizontalAlignment="Stretch" Content="Журнал" Command="{Binding OpenLogs}" /></Grid>
+                    </Grid>
+                  </Border>
+                </StackPanel>
+              </ScrollViewer>
+            </TabItem>
+          </TabControl>
+        </Grid>
+      </Grid>
+    </Border>
+    <Border Grid.Row="2" Background="{DynamicResource PanelBackgroundBrush}" BorderBrush="{DynamicResource DividerBrush}" BorderThickness="0,1,0,0" Padding="12,7,22,7">
       <Grid>
         <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-        <TextBlock Text="{Binding Status}" Foreground="{Binding StatusBrush}" FontSize="12" VerticalAlignment="Center" Margin="0,0,16,0" />
-        <Button Grid.Column="1" Content="Сохранить настройки" Style="{StaticResource PrimaryButton}" Command="{Binding Save}" />
+        <TextBlock Text="{Binding Status}" Foreground="{Binding StatusBrush}" FontSize="11" Margin="0,0,12,0" VerticalAlignment="Center"
+                   TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding Status}" AutomationProperties.LiveSetting="Polite" />
+        <Button Grid.Column="1" Width="110" MinWidth="110" Content="Сохранить" Command="{Binding Save}" ToolTip="Сохранить параметры и оформление" />
       </Grid>
     </Border>
   </Grid>

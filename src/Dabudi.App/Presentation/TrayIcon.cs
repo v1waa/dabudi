@@ -17,6 +17,8 @@ public sealed class TrayIcon : IDisposable
         _image = (Drawing.Icon)icon.Clone();
         _menu = new Forms.ContextMenuStrip();
         _menu.Items.Add("Открыть dabudi", null, (_, _) => window.Dispatcher.BeginInvoke(new Action(window.Restore)));
+        var hide = _menu.Items.Add("Скрыть окно", null, (_, _) => window.Dispatcher.BeginInvoke(new Action(window.HideToTray)));
+        _menu.Opening += (_, _) => hide.Enabled = window.IsVisible;
         _menu.Items.Add("Остановить все инструменты", null, (_, _) => window.Dispatcher.BeginInvoke(new Action(() => controller.Run(AppAction.StopAll))));
         _menu.Items.Add(new Forms.ToolStripSeparator());
         _menu.Items.Add("Выход", null, (_, _) => window.Dispatcher.BeginInvoke(new Action(() => controller.Run(AppAction.Exit))));
