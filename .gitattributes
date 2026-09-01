@@ -10,7 +10,7 @@
 *.json text eol=lf
 *.yml text eol=lf
 *.yaml text eol=lf
-*.py text eol=lf
+*.ps1 text eol=lf
 
 *.ico binary
 *.png binary

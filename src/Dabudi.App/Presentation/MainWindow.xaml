@@ -1,0 +1,149 @@
+<Window x:Class="Dabudi.Presentation.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="dabudi" Width="980" Height="750" MinWidth="820" MinHeight="540"
+        WindowStartupLocation="CenterScreen" Icon="/Assets/app.ico">
+  <Grid Margin="24,18,24,16">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <Grid Margin="0,0,0,20">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+      <StackPanel><TextBlock Text="dabudi" FontSize="27" FontWeight="SemiBold" /><TextBlock Text="3.0.0 · инструменты для Windows" Style="{StaticResource Hint}" Margin="0,3,0,0" /></StackPanel>
+      <Button Grid.Column="1" Content="Остановить всё" Command="{Binding StopAll}" Margin="0,0,10,0" VerticalAlignment="Center" />
+      <Button Grid.Column="2" Content="В трей" Click="HideToTray_Click" VerticalAlignment="Center" />
+    </Grid>
+    <TabControl x:Name="NavigationTabs" Grid.Row="1" SelectionChanged="Tabs_SelectionChanged">
+      <TabItem Header="Инструменты">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+          <Grid>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+            <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+            <Border Style="{StaticResource Card}">
+              <StackPanel>
+                <TextBlock Text="Секундомер" FontSize="18" FontWeight="SemiBold" />
+                <TextBlock Text="{Binding StopwatchStatus}" Style="{StaticResource Hint}" />
+                <TextBlock Text="{Binding ElapsedDisplay}" FontFamily="Consolas" FontSize="32" Foreground="{DynamicResource AccentBrush}" Margin="0,7,0,20" />
+                <WrapPanel><Button Content="{Binding StopwatchButton}" Command="{Binding ToggleStopwatch}" Margin="0,0,8,0" /><Button Content="Сбросить" Command="{Binding ResetStopwatch}" /></WrapPanel>
+              </StackPanel>
+            </Border>
+            <Border Grid.Column="1" Style="{StaticResource Card}" Margin="0,0,0,12">
+              <StackPanel>
+                <TextBlock Text="Автокликер" FontSize="18" FontWeight="SemiBold" />
+                <TextBlock Text="{Binding ClickerStatus}" Style="{StaticResource Hint}" />
+                <Button Content="{Binding ClickTarget}" Click="CaptureInput_Click" HorizontalAlignment="Left" Margin="0,2,0,10" />
+                <WrapPanel VerticalAlignment="Center">
+                  <TextBox Text="{Binding ClicksPerSecond, UpdateSourceTrigger=PropertyChanged}" Width="65" Margin="0,0,8,0" />
+                  <TextBlock Text="нажатий/с" VerticalAlignment="Center" Margin="0,0,14,0" />
+                  <Button Content="{Binding ClickerButton}" Command="{Binding ToggleClicker}" />
+                </WrapPanel>
+              </StackPanel>
+            </Border>
+            <Border Grid.Row="1" Style="{StaticResource Card}">
+              <StackPanel>
+                <TextBlock Text="Прицел" FontSize="18" FontWeight="SemiBold" />
+                <TextBlock Text="В центре выбранного экрана. Размер и цвет — в настройках." Style="{StaticResource Hint}" />
+                <Button Content="{Binding CrosshairButton}" Command="{Binding ToggleCrosshair}" HorizontalAlignment="Left" Margin="0,8,0,0" />
+              </StackPanel>
+            </Border>
+            <Border Grid.Column="1" Grid.Row="1" Style="{StaticResource Card}" Margin="0,0,0,12">
+              <StackPanel>
+                <TextBlock Text="Мониторинг системы" FontSize="18" FontWeight="SemiBold" />
+                <TextBlock Text="CPU, GPU и оперативная память. Недоступные датчики отображаются как «—»." Style="{StaticResource Hint}" />
+                <WrapPanel Margin="0,8,0,0"><Button Content="{Binding PerformanceButton}" Command="{Binding TogglePerformance}" /><TextBlock Text="{Binding PerformanceStatus}" VerticalAlignment="Center" Margin="14,0,0,0" Foreground="{DynamicResource MutedBrush}" /></WrapPanel>
+              </StackPanel>
+            </Border>
+            <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Style="{StaticResource Hint}" Text="Закрытие окна сворачивает dabudi в трей. Автокликер не отправляет нажатия в окно dabudi; для работы переключитесь в нужное приложение. Все команды доступны во вкладке «Горячие клавиши»." />
+          </Grid>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Header="Dead by Daylight">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <StackPanel>
+            <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+              <StackPanel>
+                <TextBlock Text="Таймеры эффектов" FontSize="22" FontWeight="SemiBold" />
+                <TextBlock Text="Запускаются одновременно вручную. Повторный запуск начинает отсчёт заново." Style="{StaticResource Hint}" />
+                <Grid Margin="0,18,0,18">
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                  <StackPanel><TextBlock Text="Decisive Strike" Margin="0,0,0,8" /><WrapPanel><TextBox Text="{Binding DsSeconds, UpdateSourceTrigger=PropertyChanged}" Width="100" /><TextBlock Text="секунд" VerticalAlignment="Center" Margin="12,0,0,0" /></WrapPanel></StackPanel>
+                  <StackPanel Grid.Column="1"><TextBlock Text="Endurance" Margin="0,0,0,8" /><WrapPanel><TextBox Text="{Binding EndSeconds, UpdateSourceTrigger=PropertyChanged}" Width="100" /><TextBlock Text="секунд" VerticalAlignment="Center" Margin="12,0,0,0" /></WrapPanel></StackPanel>
+                </Grid>
+                <TextBlock Text="0 отключает соответствующий таймер. Допустимый диапазон: 0–3600 секунд." Style="{StaticResource Hint}" />
+                <WrapPanel Margin="0,10,0,8"><Button Content="Запустить / перезапустить" Style="{StaticResource PrimaryButton}" Command="{Binding StartEffects}" Margin="0,0,10,0" /><Button Content="Закрыть таймеры" Command="{Binding CloseEffects}" /></WrapPanel>
+                <TextBlock Text="{Binding EffectsStatus}" Style="{StaticResource Hint}" />
+              </StackPanel>
+            </Border>
+            <TextBlock Text="dabudi не считывает состояние игры. Укажите нужную длительность и запускайте отсчёт кнопкой или горячей клавишей. Для показа оверлеев используйте оконный режим или режим без рамки." Style="{StaticResource Hint}" />
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Header="Горячие клавиши">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <StackPanel>
+            <TextBlock Text="Нажмите на сочетание и введите новое. Esc отменяет запись. Изменения клавиш сохраняются сразу." Style="{StaticResource Hint}" />
+            <ItemsControl ItemsSource="{Binding Hotkeys}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="0,9">
+                    <Grid>
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="170" /><ColumnDefinition Width="86" /><ColumnDefinition Width="78" /></Grid.ColumnDefinitions>
+                      <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                      <Button Grid.Column="1" Content="{Binding Binding}" Click="CaptureHotkey_Click" Margin="0,0,8,0" Padding="7" />
+                      <Button Grid.Column="2" Content="Стандарт" Command="{Binding Reset}" Margin="0,0,8,0" Padding="5" FontSize="12" />
+                      <Button Grid.Column="3" Content="Убрать" Command="{Binding Clear}" Padding="5" FontSize="12" />
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Text="Клавиша закрытия таймеров DBD действует, только пока эти таймеры открыты. Одна комбинация назначается одному действию. F12 зарезервирована Windows." Style="{StaticResource Hint}" Margin="0,16,0,8" />
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+      <TabItem Header="Настройки">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <StackPanel>
+            <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+              <StackPanel>
+                <TextBlock Text="Оверлеи" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,12" />
+                <TextBlock Text="Экран" Margin="0,0,0,7" />
+                <ComboBox ItemsSource="{Binding Displays}" DisplayMemberPath="Label" SelectedValuePath="Device" SelectedValue="{Binding SelectedMonitor}" MinHeight="34" MaxWidth="460" HorizontalAlignment="Left" MinWidth="300" />
+                <CheckBox Content="Разрешить перемещение оверлеев мышью" IsChecked="{Binding AllowDragging}" />
+                <TextBlock Text="При отключённом перемещении нажатия проходят сквозь оверлеи. Прицел всегда остаётся в центре экрана." Style="{StaticResource Hint}" />
+                <WrapPanel Margin="0,8,0,0">
+                  <StackPanel Margin="0,0,24,0"><TextBlock Text="Размер прицела (8–80)" Margin="0,0,0,7" /><TextBox Text="{Binding CrosshairSize, UpdateSourceTrigger=PropertyChanged}" Width="140" HorizontalAlignment="Left" /></StackPanel>
+                  <StackPanel><TextBlock Text="Цвет прицела" Margin="0,0,0,7" /><TextBox Text="{Binding CrosshairColor, UpdateSourceTrigger=PropertyChanged}" Width="140" /></StackPanel>
+                </WrapPanel>
+              </StackPanel>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+              <StackPanel>
+                <TextBlock Text="Оформление" FontSize="18" FontWeight="SemiBold" />
+                <TextBlock Text="Цвета в формате #RRGGBB. Изменения применяются кнопкой «Сохранить настройки»." Style="{StaticResource Hint}" />
+                <WrapPanel>
+                  <StackPanel Margin="0,0,18,12"><TextBlock Text="Фон" Margin="0,0,0,7" /><TextBox Text="{Binding BackgroundColor, UpdateSourceTrigger=PropertyChanged}" Width="135" /></StackPanel>
+                  <StackPanel Margin="0,0,18,12"><TextBlock Text="Панели" Margin="0,0,0,7" /><TextBox Text="{Binding PanelColor, UpdateSourceTrigger=PropertyChanged}" Width="135" /></StackPanel>
+                  <StackPanel Margin="0,0,18,12"><TextBlock Text="Акцент" Margin="0,0,0,7" /><TextBox Text="{Binding AccentColor, UpdateSourceTrigger=PropertyChanged}" Width="135" /></StackPanel>
+                  <StackPanel Margin="0,0,18,12"><TextBlock Text="Текст" Margin="0,0,0,7" /><TextBox Text="{Binding TextColor, UpdateSourceTrigger=PropertyChanged}" Width="135" /></StackPanel>
+                </WrapPanel>
+                <Button Content="Стандартные цвета" Command="{Binding ResetTheme}" HorizontalAlignment="Left" />
+              </StackPanel>
+            </Border>
+            <CheckBox Content="Запускать dabudi вместе с Windows (в трее)" IsChecked="{Binding RunAtStartup}" />
+            <WrapPanel Margin="0,12,0,16"><Button Content="Папка настроек" Command="{Binding OpenSettings}" Margin="0,0,10,0" /><Button Content="Журнал ошибок" Command="{Binding OpenLogs}" Margin="0,0,10,0" /><Button Content="Выход из dabudi" Command="{Binding Exit}" /></WrapPanel>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+    </TabControl>
+    <Border Grid.Row="2" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,14,0,0" Margin="0,14,0,0">
+      <Grid>
+        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+        <TextBlock Text="{Binding Status}" Foreground="{Binding StatusBrush}" FontSize="12" VerticalAlignment="Center" Margin="0,0,16,0" />
+        <Button Grid.Column="1" Content="Сохранить настройки" Style="{StaticResource PrimaryButton}" Command="{Binding Save}" />
+      </Grid>
+    </Border>
+  </Grid>
+</Window>

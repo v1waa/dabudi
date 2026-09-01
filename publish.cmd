@@ -1,13 +1,7 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-
-dotnet restore "Source\dabudi\dabudi.csproj" --locked-mode
+call build.cmd
 if errorlevel 1 exit /b %errorlevel%
-
-dotnet publish "Source\dabudi\dabudi.csproj" -c Release --no-restore -o "%~dp0dist"
-if errorlevel 1 exit /b %errorlevel%
-
-echo.
-echo Ready: "%~dp0dist\dabudi.exe"
-exit /b 0
+dotnet publish src\Dabudi.App\Dabudi.App.csproj -c Release --no-restore -o dist
+exit /b %errorlevel%

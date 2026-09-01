@@ -16,7 +16,7 @@ body:
     id: version
     attributes:
       label: Версия или commit
-      placeholder: v2.5.8 или SHA commit
+      placeholder: v3.0.0 или SHA коммита
     validations:
       required: true
 
