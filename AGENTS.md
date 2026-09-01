@@ -5,5 +5,6 @@
 - Use C#/.NET and WPF. Do not introduce Python or require an installed runtime for the distributed EXE.
 - Keep domain logic in Dabudi.Core, OS integration in Dabudi.Infrastructure, and UI/application coordination in Dabudi.App.
 - Keep user-facing text in Russian and retain the name dabudi.
+- Preserve the 2.5.8 visual style: classic navigation rail, sage graphite palette, and transparent overlays. Closing the main window exits; only explicit Hide actions keep it in the tray.
 - Validate meaningful behavior with the regression runner and run locked restore, Release build, and self-contained publish before tagging a release.
 - Release assets must be built from the tagged commit and include SHA-256 checksums. Do not commit generated binaries.
